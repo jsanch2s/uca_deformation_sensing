@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import ucr_data_collection.zhanat_granular_experiment_thumb_open
+
+
+if __name__ == '__main__':
+    ucr_data_collection.zhanat_granular_experiment_thumb_open.main()

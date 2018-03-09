@@ -1,0 +1,71 @@
+# Map of topics (to move the fingers' joints) to fingers
+# First finger
+ff: /sh_rh_ffj3_position_controller/command
+# Middle finger
+mf: /sh_rh_mfj3_position_controller/command
+# Ring finger
+rf: /sh_rh_rfj3_position_controller/command
+# Little finger
+lf: /sh_rh_lfj3_position_controller/command
+
+# Map of topics (to move the fingers' sideway joints) to fingers
+# First finger
+ff_side: /sh_rh_ffj4_position_controller/command
+# Middle finger
+mf_side: /sh_rh_mfj4_position_controller/command
+# Ring finger
+rf_side: /sh_rh_rfj4_position_controller/command
+# Little finger
+lf_side: /sh_rh_lfj4_position_controller/command
+
+# Map of topics (to monitor the fingers' joints) to fingers
+# First finger
+ff_sub: /sh_rh_ffj3_position_controller/state
+# Middle finger
+mf_sub: /sh_rh_mfj3_position_controller/state
+# Ring finger
+rf_sub: /sh_rh_rfj3_position_controller/state
+# Little finger
+lf_sub: /sh_rh_lfj3_position_controller/state
+
+# Map of topics (to monitor the fingers' sideway joints) to fingers
+# First finger
+ff_sub_side: /sh_rh_ffj4_position_controller/state
+# Middle finger
+mf_sub_side: /sh_rh_mfj4_position_controller/state
+# Ring finger
+rf_sub_side: /sh_rh_rfj4_position_controller/state
+# Little finger
+lf_sub_side: /sh_rh_lfj4_position_controller/state
+
+# Joint values depending on the finger
+# Initial configuration
+ff/initial: 0.0
+mf/initial: 0.0
+rf/initial: 0.0
+lf/initial: 0.0
+# Mid configuration
+ff/mid: 0.15
+mf/mid: 0.1
+rf/mid: 0.1
+lf/mid: 0.1
+# Final configuration
+ff/final: 0.3
+mf/final: 0.1
+rf/final: 0.1
+lf/final: 0.1
+# Left configuration
+ff_side/left: -0.3
+mf_side/left: 0.0
+rf_side/left: 0.0
+lf_side/left: 0.0
+# Right configuration
+ff_side/right: 0.2
+mf_side/right: 0.1
+rf_side/right: 0.1
+lf_side/right: 0.1
+# Center configuration
+ff_side/center: 0.0
+mf_side/center: 0.0
+rf_side/center: 0.0
+lf_side/center: 0.0

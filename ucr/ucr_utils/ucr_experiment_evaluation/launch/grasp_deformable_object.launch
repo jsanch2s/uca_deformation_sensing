@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="100"/>
+  <arg name="joint_increment" default="0.07"/>
+  <arg name="use_sim" default="false"/>
+  <arg name="switch_controller" default="/controller_manager/switch_controller"/>
+  <arg name="trajectory_controller" default="rh_trajectory_controller"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <!-- Remote machine. -->
+  <group if="$(arg use_remote_machine)">
+    <node pkg="ucr_experiment_evaluation" type="grasp_deformable_object"
+          name="grasp_deformable_object" output="screen" machine="$(arg machine)">
+      <!-- Joint increment/decrement (in radians). -->
+      <param name="joint_increment" type="double" value="$(arg joint_increment)"/>
+
+      <!-- Use simulation. -->
+      <param name="use_sim" type="bool" value="$(arg use_sim)"/>
+
+      <!-- Switch controller. -->
+      <param name="~switch_controller" type="str" value="$(arg switch_controller)"/>
+
+      <!-- Trajectory controller. -->
+      <param name="~trajectory_controller" type="str" value="$(arg trajectory_controller)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~joint_states" to="/joint_states"/>
+      <remap from="~switch_controller" to="/controller_manager/switch_controller"/>
+      <remap from="~rh_trajectory_controller" to="/rh_trajectory_controller"/>
+
+      <remap from="~ff_j2" to="/sh_rh_ffj2_position_controller/command"/>
+      <remap from="~mf_j2" to="/sh_rh_mfj2_position_controller/command"/>
+      <remap from="~rf_j2" to="/sh_rh_rfj2_position_controller/command"/>
+      <remap from="~lf_j2" to="/sh_rh_lfj2_position_controller/command"/>
+
+      <remap from="~ff_j3" to="/sh_rh_ffj3_position_controller/command"/>
+      <remap from="~mf_j3" to="/sh_rh_mfj3_position_controller/command"/>
+      <remap from="~rf_j3" to="/sh_rh_rfj3_position_controller/command"/>
+      <remap from="~lf_j3" to="/sh_rh_lfj3_position_controller/command"/>
+
+      <remap from="~th_j2" to="/sh_rh_thj2_position_controller/command"/>
+      <remap from="~th_j4" to="/sh_rh_thj4_position_controller/command"/>
+      <remap from="~th_j5" to="/sh_rh_thj5_position_controller/command"/>
+    </node>
+  </group>
+
+  <!-- Local machine. -->
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="ucr_experiment_evaluation" type="grasp_deformable_object"
+          name="grasp_deformable_object" output="screen">
+      <!-- Joint increment/decrement (in radians). -->
+      <param name="joint_increment" type="double" value="$(arg joint_increment)"/>
+
+      <!-- Use simulation. -->
+      <param name="use_sim" type="bool" value="$(arg use_sim)"/>
+
+      <!-- Switch controller. -->
+      <param name="~switch_controller" type="str" value="$(arg switch_controller)"/>
+
+      <!-- Trajectory controller. -->
+      <param name="~trajectory_controller" type="str" value="$(arg trajectory_controller)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~joint_states" to="/joint_states"/>
+
+      <remap from="~ff_j2" to="/sh_rh_ffj2_position_controller/command"/>
+      <remap from="~mf_j2" to="/sh_rh_mfj2_position_controller/command"/>
+      <remap from="~rf_j2" to="/sh_rh_rfj2_position_controller/command"/>
+      <remap from="~lf_j2" to="/sh_rh_lfj2_position_controller/command"/>
+
+      <remap from="~ff_j3" to="/sh_rh_ffj3_position_controller/command"/>
+      <remap from="~mf_j3" to="/sh_rh_mfj3_position_controller/command"/>
+      <remap from="~rf_j3" to="/sh_rh_rfj3_position_controller/command"/>
+      <remap from="~lf_j3" to="/sh_rh_lfj3_position_controller/command"/>
+
+      <remap from="~th_j2" to="/sh_rh_thj2_position_controller/command"/>
+      <remap from="~th_j4" to="/sh_rh_thj4_position_controller/command"/>
+      <remap from="~th_j5" to="/sh_rh_thj5_position_controller/command"/>
+    </node>
+  </group>
+</launch>

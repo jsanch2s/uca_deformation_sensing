@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="mesh_frame" default="map"/>
+  <arg name="scale" default="[0.05, 0.05, 0.05]"/>
+  <arg name="color" default="[1.0, 0.0, 0.0, 1.0]"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_visualization" type="mesh_visualizer"
+          name="mesh_visualizer" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Reference frame of the mesh to be converted. -->
+      <param name="mesh_frame" type="str" value="$(arg mesh_frame)"/>
+
+      <!-- Marker's scale for the X, Y and Z axes. -->
+      <rosparam param="scale" subst_value="True"> $(arg scale) </rosparam>
+
+      <!-- Marker's color values for the red, green, blue and alpha. -->
+      <rosparam param="color" subst_value="True"> $(arg color) </rosparam>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_visualization" type="mesh_visualizer"
+          name="mesh_visualizer" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Reference frame of the mesh to be converted. -->
+      <param name="mesh_frame" type="str" value="$(arg mesh_frame)"/>
+
+      <!-- Marker's scale for the X, Y and Z axes. -->
+      <rosparam param="scale" subst_value="True"> $(arg scale) </rosparam>
+
+      <!-- Marker's color values for the red, green, blue and alpha. -->
+      <rosparam param="color" subst_value="True"> $(arg color) </rosparam>
+    </node>
+  </group>
+</launch>

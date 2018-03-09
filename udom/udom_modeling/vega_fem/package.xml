@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>vega_fem</name>
+  <version>0.1.0</version>
+  <description>
+    Catkinized version of the [Vega FEM](http://run.usc.edu/vega/) library developed by
+    Jernej Barbič et al.
+  </description>
+  <license>GPLv3</license>
+
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_deformation_modeling)/launch/deformation_model_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="mesh_filename" default="test_mesh_0_indexed.veg"/>
+    <arg name="constrained_nodes" default="[]"/>
+    <arg name="index_start" default="0"/>
+  </include>
+
+  <test pkg="udom_deformation_modeling" type="deformation_model_node_test.py"
+        test-name="test_deformation_model_node">
+
+    <remap from="~component_output" to="/deformation_model/mesh"/>
+    <remap from="~event_out" to="/deformation_model/event_in"/>
+    <remap from="~force_info" to="/deformation_model/force_info"/>
+  </test>
+</launch>

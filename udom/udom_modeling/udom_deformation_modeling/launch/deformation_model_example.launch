@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="timestep" default="0.02"/>
+  <arg name="damping_mass" default="1.0"/>
+  <arg name="damping_stiffness" default="0.01"/>
+  <arg name="mesh_filename" default="example_mesh.veg"/>
+  <arg name="constrained_nodes" default="[]"/>
+  <arg name="index_start" default="1"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_deformation_modeling" type="deformation_model_node"
+          name="deformation_model" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Filename of the volumetric mesh in a .veg format. -->
+      <param name="mesh_filename" type="string" value="$(arg mesh_filename)"/>
+
+      <!-- Constrained vertices of the mesh. Each constrained node must specify
+           its three degrees of freedom. E.g., to constrain vertices 4, 10 and 14 the
+           constrained_nodes should be [12, 13, 14, 30, 31, 32, 42, 43, 44]. -->
+      <rosparam param="constrained_nodes" subst_value="True"> $(arg constrained_nodes) </rosparam>
+
+      <!-- Time step of the simulation (in seconds). -->
+      <param name="timestep" type="double" value="$(arg timestep)"/>
+
+      <!-- Mass damping coefficient, "underwater"-like damping. -->
+      <param name="damping_mass" type="double" value="$(arg damping_mass)"/>
+
+      <!-- Stiffness damping coefficient, (primarily) high-frequency damping. -->
+      <param name="damping_stiffness" type="double" value="$(arg damping_stiffness)"/>
+
+      <!-- Where the indexes start (e.g. 0 for zero-based numbering). -->
+      <param name="index_start" type="int" value="$(arg index_start)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_deformation_modeling" type="deformation_model_node"
+          name="deformation_model" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Filename of the volumetric mesh in a .veg format. -->
+      <param name="mesh_filename" type="string" value="$(arg mesh_filename)"/>
+
+      <!-- Constrained vertices of the mesh. Each constrained node must specify
+           its three degrees of freedom. E.g., to constrain vertices 4, 10 and 14 the
+           constrained_nodes should be [12, 13, 14, 30, 31, 32, 42, 43, 44]. -->
+      <rosparam param="constrained_nodes" subst_value="True"> $(arg constrained_nodes) </rosparam>
+
+      <!-- Time step of the simulation (in seconds). -->
+      <param name="timestep" type="double" value="$(arg timestep)"/>
+
+      <!-- Mass damping coefficient, "underwater"-like damping. -->
+      <param name="damping_mass" type="double" value="$(arg damping_mass)"/>
+
+      <!-- Stiffness damping coefficient, (primarily) high-frequency damping. -->
+      <param name="damping_stiffness" type="double" value="$(arg damping_stiffness)"/>
+
+      <!-- Where the indexes start (e.g. 0 for zero-based numbering). -->
+      <param name="index_start" type="int" value="$(arg index_start)"/>
+    </node>
+  </group>
+</launch>

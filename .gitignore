@@ -1,0 +1,23 @@
+# Temp files
+*~
+*.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE's configuration files (e.g. PyCharm, Eclipse)
+.idea/
+
+# Doxygen
+doc/html/
+doc/latex/
+
+rospack_nosubdirs
+
+bin/
+build/
+install/
+
+

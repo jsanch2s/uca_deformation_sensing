@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+  <name>udom_perception</name>
+  <version>0.0.1</version>
+  <description>
+    Packages that process the output of sensors (e.g. tactile sensors) to interpret
+    a physical phenomenon or estimate a quantity such as the contact force.
+  </description>
+  <license>GPLv3</license>
+
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

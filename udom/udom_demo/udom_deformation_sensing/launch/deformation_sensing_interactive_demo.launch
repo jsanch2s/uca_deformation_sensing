@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="loop_rate" default="500"/>
+  <arg name="loop_rate_deformation_model" default="500"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="damping_mass" default="1.0"/>
+  <arg name="damping_stiffness" default="0.01"/>
+  <arg name="mesh_filename" default="bar_hard"/>
+  <arg name="collision_distance" default="1"/>
+  <arg name="add_gravity" default="true"/>
+  <arg name="gravity_vector" default="[0, 0, -9.805665]"/>
+  <!-- Mass for the bar hard (in Kg). -->
+  <arg name="mass" default="0.0144"/>
+  <arg name="reference_frame" default="map"/>
+  <arg name="object_frame" default="object"/>
+  <arg name="constrained_nodes" default="[
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 133, 134, 135, 181, 182, 183, 217, 218, 219,
+    220, 221, 222, 265, 266, 267, 268, 269, 270, 325, 326, 327, 328, 329, 330, 373, 374, 375,
+    376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393]"/>
+  <arg name="timestep" default="0.01"/>
+  <arg name="index_start" default="1"/>
+  <!-- How often to publish the transforms (in milliseconds).-->
+  <arg name="tf_period" default="1"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Force merger input(s). -->
+  <remap from="/udom_deformation_sensing_full/wrench_mock_up_gui/force_array"
+         to="/udom_deformation_sensing_full/force_merger/force_array"/>
+
+  <!-- Force transformer input(s). -->
+  <remap from="/udom_deformation_sensing_full/force_merger/force_multi_array"
+         to="/udom_deformation_sensing_full/force_transformer/force_in"/>
+
+  <!-- Nodal force calculator input(s). -->
+  <remap from="/udom_deformation_sensing_full/force_transformer/force_out"
+         to="/udom_deformation_sensing_full/nodal_force_calculator/force_in"/>
+
+  <!-- Nodal force calculator output(s). -->
+  <remap from="/udom_deformation_sensing_full/nodal_force_calculator/force_out"
+         to="/udom_deformation_sensing_full/deformation_model/force_info"/>
+  <remap from="/udom_deformation_sensing_full/nodal_force_calculator/mesh"
+         to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Deformation model output(s). -->
+  <remap from="/udom_deformation_sensing_full/deformation_model/mesh"
+         to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Wrench mock-up output(s). -->
+  <remap from="/udom_deformation_sensing_full/wrench_mock_up_gui/mock_up_wrench"
+         to="/udom_deformation_sensing_full/wrench"/>
+  <remap from="/udom_deformation_sensing_full/wrench_mock_up_gui/event_out"
+         to="/udom_deformation_sensing_full/event_in"/>
+
+  <!-- Mesh visualizer input(s). -->
+  <remap from="/mesh_visualizer/mesh" to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Constrained nodes visualizer input(s). -->
+  <remap from="/points_visualizer/points_in"
+         to="/udom_deformation_sensing_full/deformation_model/constrained_nodes_visualization"/>
+
+  <!-- Mesh visualizer output(s). -->
+  <remap from="/mesh_visualizer/points" to="/udom_deformation_sensing_full/points"/>
+
+  <!-- Constrained nodes output(s). -->
+  <remap from="/points_visualizer/points_out"
+         to="/udom_deformation_sensing_full/constrained_points"/>
+
+  <!-- Deformation sensing pipeline. -->
+  <group ns="udom_deformation_sensing_full">
+    <!-- Wrench mock-up. -->
+    <include
+      file="$(find udom_visualization)/launch/wrench_mock_up_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="reference_frame" default="$(arg reference_frame)"/>
+    </include>
+
+    <!-- Force merger. -->
+    <include file="$(find udom_topic_tools)/launch/force_merger_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="config_file" default="$(find udom_topic_tools)/config/interactive.yaml"/>
+    </include>
+
+    <!-- Force transformer. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/force_transformer_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="wait_for_transform" default="$(arg wait_for_transform)"/>
+      <arg name="reference_frame" default="$(arg object_frame)"/>
+    </include>
+
+    <!-- Nodal force calculator. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/nodal_force_calculator_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="collision_distance" default="$(arg collision_distance)"/>
+      <arg name="add_gravity" default="$(arg add_gravity)"/>
+      <arg name="gravity_vector" default="$(arg gravity_vector)"/>
+      <arg name="mass" default="$(arg mass)"/>
+      <arg name="object_frame" default="$(arg object_frame)"/>
+      <arg name="reference_frame" default="$(arg reference_frame)"/>
+      <arg name="wait_for_transform" default="$(arg wait_for_transform)"/>
+    </include>
+
+    <!-- Deformation model. -->
+    <include
+      file="$(find udom_deformation_modeling)/launch/deformation_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate_deformation_model)"/>
+      <arg name="damping_mass" default="$(arg damping_mass)"/>
+      <arg name="damping_stiffness" default="$(arg damping_stiffness)"/>
+      <arg name="mesh_filename" default="$(arg mesh_filename).veg"/>
+      <arg name="constrained_nodes" default="$(arg constrained_nodes)"/>
+      <arg name="timestep" default="$(arg timestep)"/>
+      <arg name="index_start" default="$(arg index_start)"/>
+    </include>
+
+    <!-- Coordinator. -->
+    <node pkg="udom_deformation_sensing" type="coordinator_interactive_node"
+          name="coordinator" output="screen">
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Remap topics to interface with the coordinator. -->
+      <remap from="~event_in" to="/udom_deformation_sensing_full/event_in"/>
+      <remap from="~event_out" to="/udom_deformation_sensing_full/event_out"/>
+      <remap from="~tactile_data" to="/udom_deformation_sensing_full/tactile_data"/>
+      <remap from="~mesh" to="/udom_deformation_sensing_full/mesh"/>
+
+      <!-- Remap topics to trigger components. -->
+      <remap from="~start_force_merger"
+             to="/udom_deformation_sensing_full/force_merger/event_in"/>
+      <remap from="~start_force_transformer"
+             to="/udom_deformation_sensing_full/force_transformer/event_in"/>
+      <remap from="~start_nodal_force_calculator"
+             to="/udom_deformation_sensing_full/nodal_force_calculator/event_in"/>
+      <remap from="~start_deformation_model"
+             to="/udom_deformation_sensing_full/deformation_model/event_in"/>
+
+      <!-- Remap topics to get feedback from components. -->
+      <remap from="~force_merger_status"
+             to="/udom_deformation_sensing_full/force_merger/event_out"/>
+      <remap from="~force_transformer_status"
+             to="/udom_deformation_sensing_full/force_transformer/event_out"/>
+      <remap from="~nodal_force_calculator_status"
+             to="/udom_deformation_sensing_full/nodal_force_calculator/event_out"/>
+      <remap from="~deformation_model_status"
+             to="/udom_deformation_sensing_full/deformation_model/event_out"/>
+    </node>
+  </group>
+
+  <!-- Add missing transforms (x y z yaw pitch roll). -->
+  <!-- Object to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="object_frame_broadcaster"
+        args="0.559 -0.03 0.487 0 3.141593 0 $(arg reference_frame) $(arg object_frame)
+        $(arg tf_period)"/>
+
+  <!-- Visualization nodes. -->
+  <include
+    file="$(find udom_visualization)/launch/mesh_visualizer_example.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="mesh_frame" default="$(arg object_frame)"/>
+    <arg name="scale" default="[0.005, 0.005, 0.005]"/>
+    <arg name="color" default="[0.0, 1.0, 0.0, 0.5]"/>
+  </include>
+
+  <include
+    file="$(find udom_visualization)/launch/points_visualizer_example.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="points_frame" default="$(arg object_frame)"/>
+    <arg name="scale" default="[0.005, 0.005, 0.005]"/>
+    <arg name="color" default="[1.0, 0.0, 0.0, 0.9]"/>
+  </include>
+
+  <!-- To convert the mesh into a point cloud.-->
+  <include
+    file="$(find ucr_experiment_evaluation)/launch/mesh_to_pointcloud.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="reference_frame" default="$(arg object_frame)"/>
+  </include>
+
+  <!-- To convert the tetrahedral mesh into a triangular mesh.-->
+  <include
+    file="$(find ucr_experiment_evaluation)/launch/tet_mesh_to_mesh.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+  </include>
+
+  <!-- Add RViz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find udom_deformation_sensing)/config/deformation_sensing_interactive_demo.rviz"/>
+</launch>

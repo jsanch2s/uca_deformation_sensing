@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="50"/>
+  <arg name="finger" default="ff"/>
+  <arg name="probe" default="probe_flat_3"/>
+  <arg name="number_of_trials" default="5"/>
+  <arg name="duration" default="3"/>
+  <arg name="config_file"
+       default="$(find ucr_data_collection)/config/finger_experiment_params.yaml"/>
+  <arg name="file_path" default="~/Documents/phd/thesis/data/finger_experiments"/>
+  <arg name="topics" default="$(find ucr_data_collection)/config/topics_to_record.yaml"/>
+
+  <node pkg="ucr_data_collection" type="finger_data_experiment"
+        name="finger_data_experiment" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- Name of the finger to be used in the experiments (see config file). -->
+    <param name="finger" type="str" value="$(arg finger)"/>
+
+    <!-- Name of the probe to be used in the experiments (see config file). -->
+    <param name="probe" type="str" value="$(arg probe)"/>
+
+    <!-- Times the finger would be moved into contact for the same location
+      and force_profile. -->
+    <param name="number_of_trials" type="int" value="$(arg number_of_trials)"/>
+
+    <!-- Duration the finger should be in contact with the probe (in seconds). -->
+    <param name="duration" type="double" value="$(arg duration)"/>
+
+    <!-- Specifies the parameters for the experiment. -->
+    <param name="config_file" type="str" value="$(arg config_file)"/>
+
+    <!-- File path where recording is going to be saved. -->
+    <param name="file_path" type="str" value="$(arg file_path)"/>
+
+    <!-- Topics to be recorded. -->
+    <param name="topics" type="str" value="$(arg topics)"/>
+
+    <!-- Remap topics to match the tactile and wrench data. -->
+    <remap from="~tactile_data" to="/rh/tactile"/>
+    <remap from="~wrench_data" to="/sensor_readings"/>
+
+  </node>
+</launch>

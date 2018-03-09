@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import ucr_experiment_evaluation.contact_localization_evaluation_node
+
+
+if __name__ == '__main__':
+    ucr_experiment_evaluation.contact_localization_evaluation_node.main()

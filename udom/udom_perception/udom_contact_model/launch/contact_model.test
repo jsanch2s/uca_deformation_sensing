@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="contact_model" default="BioTacSimple"/>
+    <arg name="filter_force" default="false"/>
+  </include>
+
+  <test pkg="udom_contact_model" type="contact_model_node_test.py"
+        test-name="test_contact_model">
+
+    <remap from="~component_output" to="/contact_model/force_array"/>
+    <remap from="~event_out" to="/contact_model/event_in"/>
+    <remap from="~contact_info" to="/contact_model/contact_info"/>
+  </test>
+</launch>

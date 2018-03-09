@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_geometric_transformation.force_transformer_node
+
+
+if __name__ == '__main__':
+    udom_geometric_transformation.force_transformer_node.main()

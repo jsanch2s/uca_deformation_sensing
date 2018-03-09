@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<!-- This launches only the sensor model (force estimation and contact localization)
+  for the first finger. -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="loop_rate" default="1000"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="reference_frame" default="test_rig"/>
+  <arg name="probe_frame" default="probe"/>
+  <arg name="probe_tip" default="probe_tip"/>
+  <arg name="robot_frame" default="world"/>
+  <arg name="first_finger_frame" default="rh_ff_sensor"/>
+  <!-- How often to publish the transforms (in milliseconds).-->
+  <arg name="tf_period" default="1"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Tactile demux input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <!-- Sensor model input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model_gaussian/tactile_data"
+         to="/udom_deformation_sensing_full/first_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model_inverted_gaussian/tactile_data"
+         to="/udom_deformation_sensing_full/first_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model_non_gaussian/tactile_data"
+         to="/udom_deformation_sensing_full/first_finger_sensor/tactile_data_out"/>
+  <!-- Contact model input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model_gaussian/contact_info"
+         to="/udom_deformation_sensing_full/first_finger_contact_model_gaussian/contact_info"/>
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model_inverted_gaussian/contact_info"
+         to="/udom_deformation_sensing_full/first_finger_contact_model_inverted_gaussian/contact_info"/>
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model_non_gaussian/contact_info"
+         to="/udom_deformation_sensing_full/first_finger_contact_model_non_gaussian/contact_info"/>
+
+  <!-- Deformation sensing pipeline. -->
+  <group ns="udom_deformation_sensing_full">
+    <!-- Tactile demux 1 (first finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg first_finger_frame)"/>
+      <arg name="node_name" default="first_finger_sensor"/>
+      <arg name="sensor_index" default="0"/>
+    </include>
+
+    <!-- Sensor model 1 (first finger) Gaussian. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_sensor_model_gaussian"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+      <arg name="gaussian" default="True"/>
+    </include>
+
+    <!-- Sensor model 1 (first finger) Inverted Gaussian. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_sensor_model_inverted_gaussian"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+      <arg name="gaussian" default="True"/>
+      <arg name="inverted" default="True"/>
+    </include>
+
+    <!-- Sensor model 1 (first finger) Non-Gaussian. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_sensor_model_non_gaussian"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+      <arg name="gaussian" default="False"/>
+    </include>
+
+    <!-- Contact model 1 (first finger) Gaussian. -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_contact_model_gaussian"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Contact model 1 (first finger) Inverted Gaussian. -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_contact_model_inverted_gaussian"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Contact model 1 (first finger) Non-Gaussian. -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_contact_model_non_gaussian"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+  <!-- Coordinator. -->
+    <node pkg="udom_deformation_sensing" type="coordinator_full_node"
+          name="coordinator" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Remap topics to interface with the coordinator. -->
+      <remap from="~event_in" to="/udom_deformation_sensing_full/event_in"/>
+      <remap from="~event_out" to="/udom_deformation_sensing_full/event_out"/>
+      <remap from="~tactile_data" to="/udom_deformation_sensing_full/tactile_data"/>
+
+      <!-- Remap topics to trigger components. -->
+      <remap from="~start_first_finger_sensor"
+             to="/udom_deformation_sensing_full/first_finger_sensor/event_in"/>
+      <remap from="~start_first_finger_sensor_model"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_gaussian/event_in"/>
+      <remap from="~start_first_finger_contact_model"
+             to="/udom_deformation_sensing_full/first_finger_contact_model_gaussian/event_in"/>
+      <remap from="~start_middle_finger_sensor_model"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_inverted_gaussian/event_in"/>
+      <remap from="~start_middle_finger_contact_model"
+             to="/udom_deformation_sensing_full/first_finger_contact_model_inverted_gaussian/event_in"/>
+      <remap from="~start_ring_finger_sensor_model"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_non_gaussian/event_in"/>
+      <remap from="~start_ring_finger_contact_model"
+             to="/udom_deformation_sensing_full/first_finger_contact_model_non_gaussian/event_in"/>
+
+      <!-- Remap topics to get feedback from components. -->
+      <remap from="~first_finger_sensor_status"
+             to="/udom_deformation_sensing_full/first_finger_sensor/event_out"/>
+      <remap from="~first_finger_sensor_model_status"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_gaussian/event_out"/>
+      <remap from="~first_finger_contact_model_status"
+             to="/udom_deformation_sensing_full/first_finger_contact_model_gaussian/event_out"/>
+      <remap from="~middle_finger_sensor_model_status"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_inverted_gaussian/event_out"/>
+      <remap from="~middle_finger_contact_model_status"
+             to="/udom_deformation_sensing_full/first_finger_contact_model_inverted_gaussian/event_out"/>
+      <remap from="~ring_finger_sensor_model_status"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_non_gaussian/event_out"/>
+      <remap from="~ring_finger_contact_model_status"
+             to="/udom_deformation_sensing_full/first_finger_contact_model_non_gaussian/event_out"/>
+    </node>
+  </group>
+
+  <!-- To visualize the wrenches and contact points. -->
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_ff_gaussian" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/point_ff_gaussian"/>
+      <remap from="~wrench" to="/wrench_ff_gaussian"/>
+      <remap from="~contact_info"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_gaussian/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_ff_inverted_gaussian" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/point_ff_inverted_gaussian"/>
+      <remap from="~wrench" to="/wrench_ff_inverted_gaussian"/>
+      <remap from="~contact_info"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_inverted_gaussian/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_ff_non_gaussian" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/point_ff_non_gaussian"/>
+      <remap from="~wrench" to="/wrench_ff_non_gaussian"/>
+      <remap from="~contact_info"
+             to="/udom_deformation_sensing_full/first_finger_sensor_model_non_gaussian/contact_info"/>
+    </node>
+
+  <!-- Add missing transforms (x y z yaw pitch roll). -->
+  <!-- Robot to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="robot_frame_broadcaster"
+        args="0.016 0.0 0.10 1.570796 0 1.570796 $(arg reference_frame)
+        $(arg robot_frame) $(arg tf_period)"/>
+
+  <!-- Probe to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="probe_frame_broadcaster"
+        args="0.426 0.045 0.0083 0 0 0 $(arg reference_frame) $(arg probe_frame)
+        $(arg tf_period)"/>
+
+  <!-- Probe tip to the probe frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="probe_tip_frame_broadcaster"
+        args="0.014 -0.02 0.027 0 0 0 $(arg probe_frame) $(arg probe_tip)
+        $(arg tf_period)"/>
+
+  <!-- First finger sensor to finger tip. -->
+  <node pkg="tf" type="static_transform_publisher" name="ff_frame_broadcaster"
+        args="0 0 0 -1.570796 -1.570796 0 rh_fftip $(arg first_finger_frame)
+        $(arg tf_period)"/>
+</launch>

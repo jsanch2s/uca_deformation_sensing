@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+
+  <node pkg="udom_visualization" type="wrench_visualizer"
+        name="wrench_visualizer" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+  </node>
+</launch>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+    <arg name="sensor_index" default="0"/>
+    <arg name="sensor_frame" default="first_finger"/>
+    <arg name="loop_rate" default="10"/>
+  </include>
+
+  <test pkg="udom_topic_tools" type="tactile_demux_test.py" test-name="test_tactile_demux">
+    <remap from="~event_out" to="/tactile_demux/event_in"/>
+    <remap from="~tactile_data" to="/tactile_demux/tactile_data_in"/>
+    <remap from="~component_output" to="/tactile_demux/tactile_data_out"/>
+  </test>
+</launch>

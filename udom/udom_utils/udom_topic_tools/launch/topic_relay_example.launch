@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="node_name" default="topic_relay" />
+  <arg name="loop_rate" default="100" />
+
+  <node pkg="udom_topic_tools" type="topic_relay" name="$(arg node_name)" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+  </node>
+</launch>

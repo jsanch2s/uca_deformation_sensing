@@ -1,0 +1,3 @@
+# Topics to record in a rosbag file
+/sensor_readings
+/rh/tactile

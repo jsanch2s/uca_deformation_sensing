@@ -1,0 +1,87 @@
+# Map of topics (to move the fingers' joints) to fingers
+# First finger
+ff: /sh_rh_ffj3_position_controller/command
+# Middle finger
+mf: /sh_rh_mfj3_position_controller/command
+# Ring finger
+rf: /sh_rh_rfj3_position_controller/command
+# Little finger
+lf: /sh_rh_lfj3_position_controller/command
+# Thumb
+th: /sh_rh_thj5_position_controller/command
+
+# Map of topics (to move the fingers' sideway joints) to fingers
+# First finger
+ff_distal: /sh_rh_ffj0_position_controller/command
+# Middle finger
+mf_distal: /sh_rh_mfj0_position_controller/command
+# Ring finger
+rf_distal: /sh_rh_rfj0_position_controller/command
+# Little finger
+lf_distal: /sh_lh_lfj0_position_controller/command
+# Thumb (sideways)
+th_distal: /sh_rh_thj4_position_controller/command
+
+# Map of topics (to monitor the fingers' joints) to fingers
+# First finger
+ff_sub: /sh_rh_ffj3_position_controller/state
+# Middle finger
+mf_sub: /sh_rh_mfj3_position_controller/state
+# Ring finger
+rf_sub: /sh_rh_rfj3_position_controller/state
+# Little finger
+lf_sub: /sh_rh_lfj3_position_controller/state
+# Thumb
+th_sub: /sh_rh_thj5_position_controller/state
+
+# Map of topics (to monitor the fingers' sideway joints) to fingers
+# First finger
+ff_sub_distal: /sh_rh_ffj0_position_controller/state
+# Middle finger
+mf_sub_distal: /sh_rh_mfj0_position_controller/state
+# Ring finger
+rf_sub_distal: /sh_rh_rfj0_position_controller/state
+# Little finger
+lf_sub_distal: /sh_rh_lfj0_position_controller/state
+# Thumb (sideways)
+th_sub_distal: /sh_rh_thj4_position_controller/state
+
+# Joint values depending on the finger
+# (J3, THJ5)
+# Initial configuration
+ff/initial: 0.0
+mf/initial: 0.0
+rf/initial: 0.0
+lf/initial: 0.0
+th/initial: -0.33
+# Mid configuration
+ff/mid: 0.3
+mf/mid: 0.37
+rf/mid: 0.24
+lf/mid: 0.13
+th/mid: -0.08
+# Final configuration
+ff/final: 0.82
+mf/final: 0.82
+rf/final: 0.73
+lf/final: 0.67
+th/final: 0.3
+#Distals (J0/THJ4)
+# Initial configuration
+ff_distal/initial: 0.0
+mf_distal/initial: 0.0
+rf_distal/initial: 0.0
+lf_distal/initial: 0.0
+th_distal/initial: 0.6
+# Mid configuration
+ff_distal/mid: 1.08
+mf_distal/mid: 1.0
+rf_distal/mid: 1.1
+lf_distal/mid: 1.19
+th_distal/mid: 0.59
+# Final configuration
+ff_distal/final: 0.85
+mf_distal/final: 1.01
+rf_distal/final: 1.23
+lf_distal/final: 1.4
+th_distal/final: 0.73

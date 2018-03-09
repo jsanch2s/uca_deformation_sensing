@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_topic_tools.topic_relay_node
+
+
+if __name__ == '__main__':
+    udom_topic_tools.topic_relay_node.main()

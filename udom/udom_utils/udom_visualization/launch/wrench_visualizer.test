@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_visualization)/launch/wrench_visualizer_example.launch">
+    <arg name="loop_rate" default="10"/>
+  </include>
+
+  <test pkg="udom_visualization" type="wrench_visualizer_test.py"
+        test-name="test_wrench_visualizer">
+
+    <remap from="~component_output_point" to="/wrench_visualizer/point"/>
+    <remap from="~component_output_wrench" to="/wrench_visualizer/wrench"/>
+    <remap from="~contact_info" to="/wrench_visualizer/contact_info"/>
+  </test>
+</launch>

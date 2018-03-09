@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="50"/>
+  <arg name="timeout" default="3"/>
+  <arg name="wait_time" default="0.01"/>
+  <arg name="tolerance" default="0.01"/>
+
+  <arg name="config_file"
+       default="$(find ucr_data_collection)/config/zhanat_experiment_thumb_open_params.yaml"/>
+
+  <node pkg="ucr_data_collection" type="zhanat_experiment_thumb_open"
+        name="zhanat_experiment" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!--  Distance error considered to check if a joint position has been reached (in radians). -->
+    <param name="tolerance" type="double" value="$(arg tolerance)"/>
+
+    <!-- Duration to allow a motion to be completed (in seconds). -->
+    <param name="timeout" type="double" value="$(arg timeout)"/>
+
+    <!-- Time to wait until the next motion (in seconds). -->
+    <param name="wait_time" type="double" value="$(arg wait_time)"/>
+
+    <!-- Specifies the parameters for the experiment. -->
+    <param name="config_file" type="str" value="$(arg config_file)"/>
+
+  </node>
+</launch>

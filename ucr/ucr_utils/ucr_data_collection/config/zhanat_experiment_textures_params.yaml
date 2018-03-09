@@ -1,0 +1,26 @@
+# Map of topics (to move the fingers' joints) to fingers
+# Wrist
+wrist: /sh_rh_wrj1_position_controller/command
+# Wrist side
+wrist_side: /sh_rh_wrj2_position_controller/command
+
+# Map of topics (to monitor the fingers' joints) to fingers
+# First finger
+wrist_sub: /sh_rh_wrj1_position_controller/state
+# Middle finger
+wrist_side_sub: /sh_rh_wrj2_position_controller/state
+
+# Joint values depending on the finger
+# (J3, THJ5)
+# Initial configuration
+wrist/up: 0.0
+wrist_side/center: -0.2
+
+# Down configuration
+wrist/down: 0.12
+
+# Sides configuration
+wrist_side/left: 0.1
+wrist_side/right: -0.4
+
+

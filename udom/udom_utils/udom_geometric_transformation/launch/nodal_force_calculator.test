@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_geometric_transformation)/launch/nodal_force_calculator_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="add_gravity" default="False"/>
+  </include>
+
+  <test pkg="udom_geometric_transformation" type="nodal_force_calculator_node_test.py"
+        test-name="test_nodal_force_calculator">
+
+    <remap from="~component_output" to="/nodal_force_calculator/force_out"/>
+    <remap from="~event_out" to="/nodal_force_calculator/event_in"/>
+    <remap from="~force_in" to="/nodal_force_calculator/force_in"/>
+    <remap from="~mesh" to="/nodal_force_calculator/mesh"/>
+  </test>
+</launch>

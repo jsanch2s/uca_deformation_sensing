@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_deformation_sensing.coordinator_interactive
+
+
+if __name__ == '__main__':
+    udom_deformation_sensing.coordinator_interactive.main()

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_deformation_sensing)/launch/deformation_sensing_demo.launch">
+    <arg name="loop_rate" default="10"/>
+  </include>
+
+  <test pkg="udom_deformation_sensing" type="deformation_sensing_demo_test.py"
+        test-name="test_deformation_sensing_demo">
+
+    <remap from="~component_output" to="/udom_deformation_sensing_full/mesh"/>
+    <remap from="~event_out" to="/udom_deformation_sensing_full/event_in"/>
+    <remap from="~tactile_data" to="/rh/tactile"/>
+  </test>
+</launch>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="node_name" default="topic_resync" />
+  <arg name="input_topic" default="tf_old" />
+  <arg name="output_topic" default="tf" />
+  <arg name="loop_rate" default="100" />
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_topic_tools" type="topic_resync" name="$(arg node_name)"
+          output="screen" machine="$(arg machine)">
+      <!-- Name of input topic. -->
+      <param name="input_topic" type="str" value="$(arg input_topic)"/>
+      <!-- Name of output topic. -->
+      <param name="output_topic" type="str" value="$(arg output_topic)"/>
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_topic_tools" type="topic_resync" name="$(arg node_name)"
+          output="screen">
+      <!-- Name of input topic. -->
+      <param name="input_topic" type="str" value="$(arg input_topic)"/>
+      <!-- Name of output topic. -->
+      <param name="output_topic" type="str" value="$(arg output_topic)"/>
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+</launch>

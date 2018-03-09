@@ -1,0 +1,45 @@
+# Map of topics (to move the fingers' joints) to fingers
+# First finger
+ff: /sh_rh_ffj3_position_controller/command
+# Middle finger
+mf: /sh_rh_mfj3_position_controller/command
+# Ring finger
+rf: /sh_rh_rfj3_position_controller/command
+# Little finger
+lf: /sh_rh_lfj3_position_controller/command
+
+# Map of force profiles to joint values depending on the finger
+# 0 N (i.e. no contact)
+ff/zero: 0.35
+mf/zero: 0.35
+rf/zero: 0.25
+lf/zero: 0.10
+# Approximately 0.2 N
+ff/low: 0.51
+mf/low: 0.53
+rf/low: 0.39
+lf/low: 0.23
+# Approximately 0.3 N
+ff/mid: 0.52
+mf/mid: 0.53
+rf/mid: 0.39
+lf/mid: 0.23
+# Approximately 0.4 N
+ff/high: 0.52
+mf/high: 0.53
+rf/high: 0.39
+lf/high: 0.23
+
+# Probes's names
+# Flat probes with 3, 5 and 7.5 mm radius
+probe_flat_3: flat3
+probe_flat_5: flat5
+probe_flat_7-5: flat7-5
+
+# Spherical probes with 3, 5 and 7.5 mm radius
+probe_spherical_3: spherical3
+probe_spherical_5: spherical5
+probe_spherical_7-5: spherical7-5
+
+# Concave probe
+probe_concave: concave

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>ucr_utils</name>
+  <version>0.0.1</version>
+  <description>Utility packages, e.g. collecting data, performing experiments. </description>
+  <license>GPLv3</license>
+
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

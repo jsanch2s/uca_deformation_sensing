@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="50"/>
+  <arg name="iteration" default="10"/>
+  <arg name="timeout" default="1.5"/>
+  <arg name="wait_time" default="0.01"/>
+  <arg name="tolerance" default="0.01"/>
+
+  <arg name="config_file"
+       default="$(find ucr_data_collection)/config/zhanat_experiment_textures_params.yaml"/>
+
+  <node pkg="ucr_data_collection" type="zhanat_experiment_textures"
+        name="zhanat_experiment" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- Number of times to grasp the object. -->
+    <param name="iteration" type="int" value="$(arg iteration)"/>
+
+    <!--  Distance error considered to check if a joint position has been reached (in radians). -->
+    <param name="tolerance" type="double" value="$(arg tolerance)"/>
+
+    <!-- Duration to allow a motion to be completed (in seconds). -->
+    <param name="timeout" type="double" value="$(arg timeout)"/>
+
+    <!-- Time to wait until the next motion (in seconds). -->
+    <param name="wait_time" type="double" value="$(arg wait_time)"/>
+
+    <!-- Specifies the parameters for the experiment. -->
+    <param name="config_file" type="str" value="$(arg config_file)"/>
+
+  </node>
+</launch>

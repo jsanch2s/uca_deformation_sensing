@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/jsanch/Documents/phd/thesis/data/force_tactile_experiments/models_rnn/biotac.tfl"
+all_model_checkpoint_paths: "/home/jsanch/Documents/phd/thesis/data/force_tactile_experiments/models_rnn/biotac.tfl"

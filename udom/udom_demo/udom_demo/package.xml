@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>udom_demo</name>
+  <version>0.0.1</version>
+  <description>
+    Packages that provide demonstrations on deformable object manipulation.
+  </description>
+  <license>GPLv3</license>
+
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

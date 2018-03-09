@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="node_name" default="tactile_demux" />
+  <arg name="sensor_index" default="0" />
+  <arg name="sensor_frame" default="first_finger" />
+  <arg name="loop_rate" default="100" />
+
+  <node pkg="udom_topic_tools" type="tactile_demux"
+        name="$(arg node_name)" output="screen">
+    <!-- Index of the sensor to be selected. -->
+    <param name="sensor_index" type="int" value="$(arg sensor_index)"/>
+
+    <!-- Reference frame of the sensor to be selected. -->
+    <param name="sensor_frame" type="str" value="$(arg sensor_frame)"/>
+
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- Remap to be compatible with the sensor model node. -->
+    <remap from="~tactile_data_out" to="/tactile_sensor_model/tactile_data"/>
+  </node>
+</launch>

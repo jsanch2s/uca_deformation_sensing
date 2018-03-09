@@ -1,0 +1,8 @@
+# Map of topics (to move the fingers' joints) to fingers
+# Thumb
+th: /sh_rh_thj5_position_controller/command
+
+th_sub: /sh_rh_thj5_position_controller/state
+
+# Final configuration
+th/final: 0.4

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="collision_distance" default="0.001"/>
+  <arg name="add_gravity" default="true"/>
+  <arg name="gravity_vector" default="[0, 0, -9.805665]"/>
+  <arg name="reference_frame" default="base_frame"/>
+  <arg name="object_frame" default="object_frame"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="mass" default="0.0"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_geometric_transformation" type="nodal_force_calculator"
+          name="nodal_force_calculator" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Distance to determine if a collision is occurring between the mesh and the finger. -->
+      <param name="collision_distance" type="double" value="$(arg collision_distance)"/>
+
+      <!-- If true, it adds the gravity force with respect to the reference frame. -->
+      <param name="add_gravity" type="bool" value="$(arg add_gravity)"/>
+
+      <!-- The gravity vector, defaults to (0, 0, -9.805665). -->
+      <rosparam param="gravity_vector" subst_value="True"> $(arg gravity_vector) </rosparam>
+
+      <!-- Reference frame to compute the gravity vector. -->
+      <param name="reference_frame" type="string" value="$(arg reference_frame)"/>
+
+      <!-- Object frame to compute the gravity vector. -->
+      <param name="object_frame" type="string" value="$(arg object_frame)"/>
+
+      <!-- Maximum duration to wait for a transform (in seconds). -->
+      <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+
+      <!--  Object's mass (in Kg). -->
+      <param name="mass" type="double" value="$(arg mass)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_geometric_transformation" type="nodal_force_calculator"
+          name="nodal_force_calculator" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Distance to determine if a collision is occurring between the mesh and the finger. -->
+      <param name="collision_distance" type="double" value="$(arg collision_distance)"/>
+
+      <!-- If true, it adds the gravity force with respect to the reference frame. -->
+      <param name="add_gravity" type="bool" value="$(arg add_gravity)"/>
+
+      <!-- The gravity vector, defaults to (0, 0, -9.805665). -->
+      <rosparam param="gravity_vector" subst_value="True"> $(arg gravity_vector) </rosparam>
+
+      <!-- Reference frame to compute the gravity vector. -->
+      <param name="reference_frame" type="string" value="$(arg reference_frame)"/>
+
+      <!-- Object frame to compute the gravity vector. -->
+      <param name="object_frame" type="string" value="$(arg object_frame)"/>
+
+      <!-- Maximum duration to wait for a transform (in seconds). -->
+      <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+      <!--  Object's mass (in Kg). -->
+      <param name="mass" type="double" value="$(arg mass)"/>
+    </node>
+  </group>
+</launch>

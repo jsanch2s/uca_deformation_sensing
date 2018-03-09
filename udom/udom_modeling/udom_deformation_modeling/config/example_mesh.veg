@@ -1,0 +1,12 @@
+*VERTICES
+*INCLUDE example_mesh.node
+*ELEMENTS
+TETS
+*INCLUDE example_mesh.ele
+
+# Mass density (kg/m^3), Young modulus (N/m^2), Poisson ratio
+*MATERIAL BODY
+ENU, 400, 79300, 0.45
+
+*REGION
+allElements, BODY

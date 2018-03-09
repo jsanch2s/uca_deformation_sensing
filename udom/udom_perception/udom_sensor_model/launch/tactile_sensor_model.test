@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+    <arg name="max_intensity_value" default="200" />
+    <arg name="intensity_threshold" default="10" />
+    <arg name="gaussian" default="True" />
+    <arg name="inverted" default="False" />
+    <arg name="loop_rate" default="10"/>
+    <arg name="electrodes_config_file"
+         default="$(find udom_sensor_model)/config/electrodes_pose.csv"/>
+    <arg name="config_file" default="$(find udom_sensor_model)/config/biotac_areas.yaml"/>
+  </include>
+
+  <test pkg="udom_sensor_model" type="tactile_sensor_model_node_test.py"
+        test-name="test_tactile_sensor_model">
+
+    <remap from="~component_output" to="/tactile_sensor_model/contact_info"/>
+    <remap from="~event_out" to="/tactile_sensor_model/event_in"/>
+    <remap from="~tactile_data" to="/tactile_sensor_model/tactile_data"/>
+  </test>
+</launch>

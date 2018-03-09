@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="config_file" default="$(find udom_topic_tools)/config/example.yaml"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_topic_tools" type="force_merger" name="force_merger"
+          output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Specifies which topics the node should subscribe to. -->
+      <param name="config_file" type="str" value="$(arg config_file)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_topic_tools" type="force_merger" name="force_merger"
+          output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Specifies which topics the node should subscribe to. -->
+      <param name="config_file" type="str" value="$(arg config_file)"/>
+    </node>
+  </group>
+</launch>

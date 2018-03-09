@@ -1,0 +1,19 @@
+# Approximate centers of the nine locations of the BioTac based on[1].
+#
+# [1] Lin, C.H., Fishel, J.A., Loeb, G.E., "Estimating point of contact, force and
+# torque in a biomimetic tactile sensor with deformable skin", SynTouch LLC, 2013
+#
+# The corresponds to one of the nine areas and the value is the X, Y and Z position
+# of the area's center.
+#
+finger_locations: {
+    4: [-0.0119, -0.003513, -0.0035],
+    1: [-0.0117, 0.0, -0.00508],
+    5: [-0.0119, 0.003513, -0.0035],
+    6: [-0.0062, -0.003513, -0.00367],
+    2: [-0.0062, 0.0, -0.00508],
+    7: [-0.0062, 0.003513, -0.00367],
+    8: [0.003, 0.003, -0.0025],
+    3: [0.003, 0.0, -0.00333],
+    9: [0.003, 0.003, -0.0025]
+}

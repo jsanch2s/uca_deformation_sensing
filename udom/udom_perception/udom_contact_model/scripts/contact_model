@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_contact_model.contact_model_node
+
+
+if __name__ == '__main__':
+    udom_contact_model.contact_model_node.main()

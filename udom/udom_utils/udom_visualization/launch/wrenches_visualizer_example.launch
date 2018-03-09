@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="input_namespace" default="udom_force_estimation"/>
+  <arg name="output_namespace" default="udom_deformation_sensing_full"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <!-- Wrenches visualizer for all the fingers-->
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_ff" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_ff"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_ff"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/first_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_mf" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_mf"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_mf"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/middle_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_rf" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_rf"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_rf"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/ring_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_lf" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_lf"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_lf"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/little_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_th" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_th"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_th"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/thumb_sensor_model/contact_info"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_ff" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_ff"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_ff"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/first_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_mf" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_mf"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_mf"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/middle_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_rf" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_rf"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_rf"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/ring_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_lf" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_lf"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_lf"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/little_finger_sensor_model/contact_info"/>
+    </node>
+
+    <node pkg="udom_visualization" type="wrench_visualizer"
+          name="wrench_visualizer_th" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~point" to="/$(arg output_namespace)/estimated_force/point_th"/>
+      <remap from="~wrench" to="/$(arg output_namespace)/estimated_force/wrench_th"/>
+      <remap from="~contact_info"
+             to="/$(arg input_namespace)/thumb_sensor_model/contact_info"/>
+    </node>
+  </group>
+</launch>

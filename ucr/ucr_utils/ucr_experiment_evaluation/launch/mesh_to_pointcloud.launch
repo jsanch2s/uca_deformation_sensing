@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+
+<launch>
+  <arg name="loop_rate" default="100"/>
+  <arg name="reference_frame" default="map"/>
+
+  <node pkg="ucr_experiment_evaluation" type="mesh_to_point_cloud"
+        name="mesh_to_point_cloud_node" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- The point cloud will be described with respect to this frame. -->
+    <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+    <remap from="~mesh_in" to="/udom_deformation_sensing_full/mesh"/>
+    <remap from="~point_cloud_out" to="/udom_deformation_sensing_full/surface"/>
+    <remap from="~nodes" to="/nodes_to_extract"/>
+  </node>
+</launch>

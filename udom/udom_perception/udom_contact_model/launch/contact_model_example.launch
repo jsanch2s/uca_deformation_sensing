@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="node_name" default="contact_model"/>
+  <arg name="contact_model" default="BioTacSimple"/>
+  <arg name="filter_force" default="true"/>
+  <arg name="threshold" default="0.15"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_contact_model" type="contact_model"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Name of the contact model to be used. -->
+      <param name="contact_model" type="str" value="$(arg contact_model)"/>
+
+      <!-- If set to true, it filters out residual forces that are below a specified
+      threshold. -->
+      <param name="filter_force" type="bool" value="$(arg filter_force)"/>
+
+      <!-- Threshold to remove residual forces of the sensor (in Newtons). -->
+      <param name="threshold" type="double" value="$(arg threshold)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_contact_model" type="contact_model"
+          name="$(arg node_name)" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Name of the contact model to be used. -->
+      <param name="contact_model" type="str" value="$(arg contact_model)"/>
+
+      <!-- If set to true, it filters out residual forces that are below a specified
+      threshold. -->
+      <param name="filter_force" type="bool" value="$(arg filter_force)"/>
+
+      <!-- Threshold to remove residual forces of the sensor (in Newtons). -->
+      <param name="threshold" type="double" value="$(arg threshold)"/>
+    </node>
+  </group>
+</launch>

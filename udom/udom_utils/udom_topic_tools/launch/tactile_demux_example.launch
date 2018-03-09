@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="node_name" default="tactile_demux" />
+  <arg name="sensor_index" default="0" />
+  <arg name="sensor_frame" default="first_finger" />
+  <arg name="loop_rate" default="10" />
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_topic_tools" type="tactile_demux"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+      <!-- Index of the sensor to be selected. -->
+      <param name="sensor_index" type="int" value="$(arg sensor_index)"/>
+
+      <!-- Reference frame of the sensor to be selected. -->
+      <param name="sensor_frame" type="str" value="$(arg sensor_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_topic_tools" type="tactile_demux"
+          name="$(arg node_name)" output="screen">
+      <!-- Index of the sensor to be selected. -->
+      <param name="sensor_index" type="int" value="$(arg sensor_index)"/>
+
+      <!-- Reference frame of the sensor to be selected. -->
+      <param name="sensor_frame" type="str" value="$(arg sensor_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+</launch>

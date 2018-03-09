@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>udom_utils</name>
+  <version>0.0.1</version>
+  <description>
+    Utilities used to interface between the different UDOM packages.
+  </description>
+  <license>GPLv3</license>
+
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+
+<launch>
+  <arg name="loop_rate" default="1000"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="reference_frame" default="probe_tip"/>
+
+  <node pkg="ucr_experiment_evaluation" type="contact_localization_evaluation"
+        name="contact_localization_evaluation_node" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- Maximum duration to wait for a transform (in seconds). -->
+    <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+
+    <!-- The contact location will be described with respect to this frame. -->
+    <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+    <remap from="~gaussian"
+           to="/udom_deformation_sensing_full/first_finger_contact_model_gaussian/contact_info"/>
+    <remap from="~inverted_gaussian"
+           to="/udom_deformation_sensing_full/first_finger_contact_model_inverted_gaussian/contact_info"/>
+    <remap from="~non_gaussian"
+           to="/udom_deformation_sensing_full/first_finger_contact_model_non_gaussian/contact_info"/>
+
+  </node>
+</launch>

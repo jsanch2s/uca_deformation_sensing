@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_visualization)/launch/mesh_visualizer_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="mesh_frame" default="map"/>
+    <arg name="scale" default="[0.05, 0.05, 0.05]"/>
+    <arg name="color" default="[1.0, 0.0, 0.0, 1.0]"/>
+  </include>
+
+  <test pkg="udom_visualization" type="mesh_visualizer_test.py"
+        test-name="test_mesh_visualizer">
+
+    <remap from="~component_output" to="/mesh_visualizer/points"/>
+    <remap from="~mesh" to="/mesh_visualizer/mesh"/>
+  </test>
+</launch>

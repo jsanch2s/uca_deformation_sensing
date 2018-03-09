@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_visualization)/launch/points_visualizer_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="points_frame" default="test_frame"/>
+    <arg name="scale" default="[0.05, 0.05, 0.05]"/>
+    <arg name="color" default="[1.0, 0.0, 0.0, 1.0]"/>
+  </include>
+
+  <test pkg="udom_visualization" type="points_visualizer_test.py"
+        test-name="test_points_visualizer">
+
+    <remap from="~component_output" to="/points_visualizer/points_out"/>
+    <remap from="~points" to="/points_visualizer/points_in"/>
+  </test>
+</launch>

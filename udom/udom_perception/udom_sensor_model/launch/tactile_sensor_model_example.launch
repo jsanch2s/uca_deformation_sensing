@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="max_intensity_value" default="100" />
+  <arg name="intensity_threshold" default="0" />
+  <arg name="gaussian" default="True" />
+  <arg name="inverted" default="False" />
+  <arg name="loop_rate" default="100" />
+  <arg name="node_name" default="tactile_sensor_model" />
+  <arg name="sensor_model" default="BioTacRNN" />
+  <arg name="electrodes_config_file"
+       default="$(find udom_sensor_model)/config/electrodes_pose.csv"/>
+  <arg name="config_file" default="$(find udom_sensor_model)/config/biotac_areas.yaml"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="tactile_sensor_model"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+      <!-- Both of these values, max_intensity_value and intensity_threshold, assume
+           the resting value from the electrodes has already been subtracted.-->
+      <!-- Maximum value that an electrode might reach. -->
+      <param name="max_intensity_value" type="int" value="$(arg max_intensity_value)"/>
+      <!-- Threshold used to decide whether or not an electrode is active.
+           Since the BioTac outputs a lower value the more its surface is pressed,
+           here a negative value means more intensity. Thus the values above this
+           threshold would be cutoff.-->
+      <param name="intensity_threshold" type="int" value="$(arg intensity_threshold)"/>
+
+      <!-- Both of these values, gaussian and inverted, are used for the contact
+           localization algorithm. -->
+      <!-- If True, it uses a Gaussian distribution to find the electrodes' centers.
+           Otherwise, it assumes the center as specified in the electrodes config file. -->
+      <param name="gaussian" type="bool" value="$(arg gaussian)"/>
+      <!-- If False, it assumes that the intensity value of each electrode is proportional
+           to the Gaussian distribution's width. Otherwise, the width is inversely
+           proportional to the intensity. -->
+      <param name="inverted" type="bool" value="$(arg inverted)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- File with the labels, positions and normals of the electrodes. -->
+      <param name="electrodes_config_file" type="str" value="$(arg electrodes_config_file)"/>
+
+      <!-- Specifies the location of the BioTac areas. -->
+      <param name="config_file" type="str" value="$(arg config_file)"/>
+
+      <!-- Name of the tactile sensor model to be used. -->
+      <param name="sensor_model" type="str" value="$(arg sensor_model)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="tactile_sensor_model"
+          name="$(arg node_name)" output="screen">
+      <!-- Both of these values, max_intensity_value and intensity_threshold, assume
+           the resting value from the electrodes has already been subtracted.-->
+      <!-- Maximum value that an electrode might reach. -->
+      <param name="max_intensity_value" type="int" value="$(arg max_intensity_value)"/>
+      <!-- Threshold used to decide whether or not an electrode is active.
+           Since the BioTac outputs a lower value the more its surface is pressed,
+           here a negative value means more intensity. Thus the values above this
+           threshold would be cutoff.-->
+      <param name="intensity_threshold" type="int" value="$(arg intensity_threshold)"/>
+
+      <!-- Both of these values, gaussian and inverted, are used for the contact
+           localization algorithm. -->
+      <!-- If True, it uses a Gaussian distribution to find the electrodes' centers.
+           Otherwise, it assumes the center as specified in the electrodes config file. -->
+      <param name="gaussian" type="bool" value="$(arg gaussian)"/>
+      <!-- If False, it assumes that the intensity value of each electrode is proportional
+           to the Gaussian distribution's width. Otherwise, the width is inversely
+           proportional to the intensity. -->
+      <param name="inverted" type="bool" value="$(arg inverted)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- File with the labels, positions and normals of the electrodes. -->
+      <param name="electrodes_config_file" type="str" value="$(arg electrodes_config_file)"/>
+
+      <!-- Specifies the location of the BioTac areas. -->
+      <param name="config_file" type="str" value="$(arg config_file)"/>
+
+      <!-- Name of the tactile sensor model to be used. -->
+      <param name="sensor_model" type="str" value="$(arg sensor_model)"/>
+    </node>
+  </group>
+</launch>

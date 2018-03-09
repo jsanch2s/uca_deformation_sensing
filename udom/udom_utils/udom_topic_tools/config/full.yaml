@@ -1,0 +1,8 @@
+# The topics the node should subscribe to should be specified by the following format:
+# [name]: [topic_name]
+
+force_1: /udom_deformation_sensing_full/force_merger/force_array_first_finger
+force_2: /udom_deformation_sensing_full/force_merger/force_array_middle_finger
+force_3: /udom_deformation_sensing_full/force_merger/force_array_ring_finger
+force_4: /udom_deformation_sensing_full/force_merger/force_array_little_finger
+force_5: /udom_deformation_sensing_full/force_merger/force_array_thumb

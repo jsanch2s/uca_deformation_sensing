@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="reference_frame" default="map"/>
+
+  <node pkg="udom_visualization" type="wrench_mock_up_gui"
+        name="wrench_mock_up_gui" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- Reference frame of the wrench to be published. -->
+    <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+  </node>
+</launch>

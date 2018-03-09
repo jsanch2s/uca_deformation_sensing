@@ -1,0 +1,5 @@
+# The topics the node should subscribe to should be specified by the following format:
+# [name]: [topic_name]
+
+force_1: /force_merger/force_array_1
+force_2: /force_merger/force_array_2
