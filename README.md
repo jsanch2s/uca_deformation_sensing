@@ -31,8 +31,15 @@ roslaunch udom_deformation_sensing deformation_sensing_interactive_demo.launch m
 
 **2. Use the GUI to control the force exerted to the object as well as to  start/stop/reset the deformation.**
 
+After clicking the `start` button you should see a mesh object like the one shown below.
+
+![Interactive demo](https://raw.githubusercontent.com/jsanch2s/uca_deformation_sensing/master/doc/deformation_sensing.png)
+
+
 See also, the packages inside the metapackages described at the beginning for examples of
 specific usage.
+
+
 
 ## Testing
 Each package has a test directory with integration and unit tests.
