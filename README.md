@@ -1,7 +1,7 @@
 # Deformation sensing
 This repository contains ROS packages to estimate the shape of a deformable as it is manipulated by a robot.
 To model deformations, we created a ROS wrapper of the [Vega FEM](http://run.usc.edu/vega/) library.
-This code was developed as part of my PhD thesis in Université Clermont Auvergne (UCA), France, under the supervision of Prof. Youcef Mezouar.
+This code was developed as part of my PhD thesis in Université Clermont Auvergne (UCA), France, under the supervision of Prof. [Youcef Mezouar](http://youcef-mezouar.wixsite.com/ymezouar).
 
 ## Getting Started
 Follow these instructions to see how to install, use and test the contents of this repository.
