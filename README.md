@@ -7,7 +7,7 @@ This code was developed as part of my PhD thesis in Université Clermont Auvergn
 Follow these instructions to see how to install, use and test the contents of this repository.
 
 ## Requirements
-The project has been developed and tested under Ubuntu 14.04 and Ubunt 16.04. It uses the following
+The project has been developed and tested under Ubuntu 14.04 and Ubuntu 16.04. It uses the following
 dependencies:
 
 * [ROS](http://wiki.ros.org/ROS/Installation) (Tested under Indigo and Kinetic)
@@ -17,6 +17,12 @@ dependencies:
 To estimate the force based on the [BioTac](http://wiki.ros.org/BioTac) sensor readings
 * [tflearn](http://tflearn.org/installation/ (tensorflow==1.1.0))
 * [shadow_robot](http://shadow-robot.readthedocs.io/en/latest/generated/shadow_robot/INSTALL.html)
+
+To estimate the force based on the [ATI Gamma](https://www.ati-ia.com/products/ft/ft_models.aspx?id=Gamma) force-torque sensor:
+* [force_sensor](https://github.com/lequievre/platform-sigma/tree/master/force-torque-sensor-master)
+
+To control the robot using the KUKA LWR+4 arm:
+* [kuka_controllers](https://github.com/lequievre/platform-sigma)
 
 To run unit tests:
 * [pytest](https://docs.pytest.org/en/latest/getting-started.html)
