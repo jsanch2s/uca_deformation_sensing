@@ -27,6 +27,7 @@ install(PROGRAMS
   scripts/contact_localization_evaluation
   scripts/grasp_deformable_object
   scripts/mesh_to_point_cloud
+  scripts/tet_mesh_to_mesh
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

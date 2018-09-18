@@ -138,6 +138,12 @@
     </node>
   </group>
 
+  <!-- GUI to open/close the hand. -->
+  <include
+    file="$(find ucr_experiment_evaluation)/launch/grasp_deformable_object.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+  </include>
+
   <!-- To visualize the wrenches and contact points. -->
     <node pkg="udom_visualization" type="wrench_visualizer"
           name="wrench_visualizer_ff_gaussian" output="screen">
@@ -175,12 +181,12 @@
   <!-- Add missing transforms (x y z yaw pitch roll). -->
   <!-- Robot to the reference frame. -->
   <node pkg="tf" type="static_transform_publisher" name="robot_frame_broadcaster"
-        args="0.016 0.0 0.10 1.570796 0 1.570796 $(arg reference_frame)
+        args="0.2025 0.0 0.0157 1.570796 0 0 $(arg reference_frame)
         $(arg robot_frame) $(arg tf_period)"/>
 
   <!-- Probe to the reference frame. -->
   <node pkg="tf" type="static_transform_publisher" name="probe_frame_broadcaster"
-        args="0.426 0.045 0.0083 0 0 0 $(arg reference_frame) $(arg probe_frame)
+        args="0.291 0.037 0.4207 0 -1.570796 0 $(arg reference_frame) $(arg probe_frame)
         $(arg tf_period)"/>
 
   <!-- Probe tip to the probe frame. -->

@@ -54,6 +54,9 @@ class TetMeshToMeshNode(object):
         # Scale to visualize the triangles in the mesh.
         self.scale = rospy.get_param('~scale', 1.0)
 
+        # Transparency of the mesh (0.0 is fully transparent)
+        self.alpha = rospy.get_param('~alpha', 1.0)
+
         # Node cycle rate (in Hz).
         self.loop_rate = rospy.Rate(rospy.get_param('~loop_rate', 10))
 
@@ -70,7 +73,7 @@ class TetMeshToMeshNode(object):
         self.mesh_vis.header.frame_id = self.reference_frame
         self.mesh_vis.type = visualization_msgs.msg.Marker.TRIANGLE_LIST
         self.mesh_vis.scale = geometry_msgs.msg.Vector3(self.scale, self.scale, self.scale)
-        self.mesh_vis.color = std_msgs.msg.ColorRGBA(0.93, 0.82, 0.59, 1.0)
+        self.mesh_vis.color = std_msgs.msg.ColorRGBA(0.93, 0.82, 0.59, self.alpha)
 
     def mesh_in_cb(self, msg):
         """

@@ -57,6 +57,9 @@ class ContactLocalizationEvaluationNode(object):
         self.reference_frame = rospy.get_param("~reference_frame", None)
         assert self.reference_frame is not None, "A reference frame must be specified."
 
+        # Force contact threshold to print the results (in N).
+        self.threshold = rospy.get_param('~contact_threshold', 0.5)
+
         # Maximum duration to wait for a transform (in seconds).
         self.wait_for_transform = rospy.get_param('~wait_for_transform', 0.1)
 
@@ -192,9 +195,6 @@ class ContactLocalizationEvaluationNode(object):
         """
         Transforms the point in the contact information into the reference frame.
 
-        :return: The nodal force information.
-        :rtype: std_msgs.msg.Float32MultiArray
-
         """
         gaussian_point = geometry_msgs.msg.PointStamped()
         gaussian_point.header.frame_id = self.gaussian_info.header.frame_id
@@ -211,40 +211,43 @@ class ContactLocalizationEvaluationNode(object):
         non_gaussian_point.header.stamp = self.non_gaussian_info.header.stamp
         non_gaussian_point.point = self.non_gaussian_info.contact_points[0]
 
-        try:
-            gaussian_point_out = self.buffer.transform(
-                gaussian_point, self.reference_frame,
-                timeout=rospy.Duration(self.wait_for_transform))
-            inverted_gaussian_point_out = self.buffer.transform(
-                inverted_gaussian_point, self.reference_frame,
-                timeout=rospy.Duration(self.wait_for_transform))
-            non_gaussian_point_out = self.buffer.transform(
-                non_gaussian_point, self.reference_frame,
-                timeout=rospy.Duration(self.wait_for_transform))
+        force = self.non_gaussian_info.wrenches[0].force
+        magnitude = np.linalg.norm((force.x, force.y, force.z))
+        if magnitude >= self.threshold:
+            try:
+                gaussian_point_out = self.buffer.transform(
+                    gaussian_point, self.reference_frame,
+                    timeout=rospy.Duration(self.wait_for_transform))
+                inverted_gaussian_point_out = self.buffer.transform(
+                    inverted_gaussian_point, self.reference_frame,
+                    timeout=rospy.Duration(self.wait_for_transform))
+                non_gaussian_point_out = self.buffer.transform(
+                    non_gaussian_point, self.reference_frame,
+                    timeout=rospy.Duration(self.wait_for_transform))
 
-            gaussian_error = np.linalg.norm([
-                gaussian_point_out.point.x, gaussian_point_out.point.y,
-                gaussian_point_out.point.z])
-            inverted_gaussian_error = np.linalg.norm([
-                inverted_gaussian_point_out.point.x, inverted_gaussian_point_out.point.y,
-                inverted_gaussian_point_out.point.z])
-            non_gaussian_error = np.linalg.norm([
-                non_gaussian_point_out.point.x, non_gaussian_point_out.point.y,
-                non_gaussian_point_out.point.z])
-
-            rospy.loginfo(
-                "\nGaussian: {:.4f} ({:.4f}, {:.4f}, {:.4f})\n"
-                "Inverted Gaussian: {:.4f} ({:.4f}, {:.4f}, {:.4f})\nNon Gaussian: {:.4f} "
-                "({:.4f}, {:.4f}, {:.4f})\n".format(
-                    gaussian_error, gaussian_point_out.point.x, gaussian_point_out.point.y,
-                    gaussian_point_out.point.z, inverted_gaussian_error,
+                gaussian_error = np.linalg.norm([
+                    gaussian_point_out.point.x, gaussian_point_out.point.y,
+                    gaussian_point_out.point.z])
+                inverted_gaussian_error = np.linalg.norm([
                     inverted_gaussian_point_out.point.x, inverted_gaussian_point_out.point.y,
-                    inverted_gaussian_point_out.point.z, non_gaussian_error,
+                    inverted_gaussian_point_out.point.z])
+                non_gaussian_error = np.linalg.norm([
                     non_gaussian_point_out.point.x, non_gaussian_point_out.point.y,
-                    non_gaussian_point_out.point.z))
-        except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
-                tf2_ros.ExtrapolationException) as e:
-            rospy.logwarn("Error while transforming the points:\n{}".format(e))
+                    non_gaussian_point_out.point.z])
+
+                rospy.loginfo(
+                    "\nGaussian: {:.4f} ({:.4f}, {:.4f}, {:.4f})\n"
+                    "Inverted Gaussian: {:.4f} ({:.4f}, {:.4f}, {:.4f})\nNon Gaussian: {:.4f} "
+                    "({:.4f}, {:.4f}, {:.4f})\n".format(
+                        gaussian_error, gaussian_point_out.point.x, gaussian_point_out.point.y,
+                        gaussian_point_out.point.z, inverted_gaussian_error,
+                        inverted_gaussian_point_out.point.x, inverted_gaussian_point_out.point.y,
+                        inverted_gaussian_point_out.point.z, non_gaussian_error,
+                        non_gaussian_point_out.point.x, non_gaussian_point_out.point.y,
+                        non_gaussian_point_out.point.z))
+            except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
+                    tf2_ros.ExtrapolationException) as e:
+                rospy.logwarn("Error while transforming the points:\n{}".format(e))
 
     def reset_component_data(self):
         """
