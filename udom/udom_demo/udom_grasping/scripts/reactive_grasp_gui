@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_grasping.reactive_grasp_gui_node
+
+
+if __name__ == '__main__':
+    udom_grasping.reactive_grasp_gui_node.main()

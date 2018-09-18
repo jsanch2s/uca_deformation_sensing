@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_force_estimation)/launch/force_estimation_demo_sim.launch">
+    <arg name="loop_rate" default="100"/>
+  </include>
+
+  <test pkg="udom_force_estimation" type="force_estimation_demo_sim_test.py"
+        test-name="test_force_estimation_demo_sim" time-limit="120.0">
+
+    <remap from="~wrench_out" to="/udom_force_estimation/wrench_out"/>
+    <remap from="~contact_info_out"
+           to="/udom_force_estimation/first_finger_sensor_model/contact_info"/>
+    <remap from="~event_out" to="/udom_force_estimation/event_in"/>
+    <remap from="~wrench_in" to="/udom_force_estimation/wrench_in"/>
+    <remap from="~tactile_data" to="/udom_force_estimation/tactile_data_in"/>
+  </test>
+</launch>

@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="100"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="controller_type" default="simple"/>
+  <arg name="gains" default="[0.25, 0.25, 0.25, 0, 0, 0]"/>
+  <arg name="limits" default="[1.0, 1.0, 1.0, 0.5, 0.5, 0.5]"/>
+  <arg name="linear_tolerance" default="0.005"/>
+  <arg name="angular_tolerance" default="1.0"/>
+  <arg name="sync" default="false"/>
+  <arg name="twist_reference_frame" default="kuka_lwr_right_base_link"/>
+  <arg name="target_pose_frame" default="kuka_lwr_right_base_link"/>
+  <arg name="current_pose_reference_frame" default="kuka_lwr_right_base_link"/>
+  <arg name="current_pose_link" default="kuka_lwr_right_grasp_link"/>
+  <arg name="node_name" default="pose_controller"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <!-- Add transforms relating the grasp link to the arm end-effector (x y z yaw pitch roll). -->
+  <node pkg="tf" type="static_transform_publisher" name="grasp_link_broadcaster"
+        args="0.055 0.02 0.39 0 0 0.0 kuka_lwr_right_7_link $(arg current_pose_link) 10"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_pose_control" type="pose_controller"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+
+      <!-- The type of controller to use. -->
+      <param name="controller_type" type="str" value="$(arg controller_type)"/>
+
+      <!-- The twist will be described with respect to this frame. -->
+      <param name="reference_frame" type="str" value="$(arg twist_reference_frame)"/>
+
+      <!-- Proportional gains for each of the six dimensions. -->
+      <rosparam param="gains" subst_value="True"> $(arg gains)</rosparam>
+
+      <!-- Velocity limits for each of the six dimensions (in m/s, rad/s). -->
+      <rosparam param="limits" subst_value="True"> $(arg limits)</rosparam>
+
+      <!-- Linear tolerance (in meters). -->
+      <param name="linear_tolerance" type="double" value="$(arg linear_tolerance)"/>
+
+      <!-- Angular tolerance (in degrees). -->
+      <param name="angular_tolerance" type="double" value="$(arg angular_tolerance)"/>
+
+      <!-- Whether to synchronize all velocities such that they reach the target
+      at the same time. -->
+      <param name="sync" type="bool" value="$(arg sync)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~twist_out" to="/kuka_lwr_right/joint_velocity_controller/ee_cmd_vel"/>
+    </node>
+
+    <!-- Target pose (from GUI). -->
+    <node pkg="udom_pose_control" type="pose_mock_up_gui"
+          name="pose_mock_up_gui" output="screen" machine="$(arg machine)">
+
+      <!-- The reference frame of the mock-up pose. -->
+      <param name="reference_frame" type="str" value="$(arg target_pose_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~mock_up_pose" to="/$(arg node_name)/target_pose"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_pose_control" type="pose_controller"
+          name="$(arg node_name)" output="screen">
+
+      <!-- The type of controller to use. -->
+      <param name="controller_type" type="str" value="$(arg controller_type)"/>
+
+      <!-- The twist will be described with respect to this frame. -->
+      <param name="reference_frame" type="str" value="$(arg twist_reference_frame)"/>
+
+      <!-- Proportional gains for each of the six dimensions. -->
+      <rosparam param="gains" subst_value="True"> $(arg gains)</rosparam>
+
+      <!-- Velocity limits for each of the six dimensions (in m/s, rad/s). -->
+      <rosparam param="limits" subst_value="True"> $(arg limits)</rosparam>
+
+      <!-- Linear tolerance (in meters). -->
+      <param name="linear_tolerance" type="double" value="$(arg linear_tolerance)"/>
+
+      <!-- Angular tolerance (in degrees). -->
+      <param name="angular_tolerance" type="double" value="$(arg angular_tolerance)"/>
+
+      <!-- Whether to synchronize all velocities such that they reach the target
+      at the same time. -->
+      <param name="sync" type="bool" value="$(arg sync)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~twist_out" to="/kuka_lwr_right/joint_velocity_controller/ee_cmd_vel"/>
+    </node>
+
+    <!-- Target pose (from GUI). -->
+    <node pkg="udom_pose_control" type="pose_mock_up_gui"
+          name="pose_mock_up_gui" output="screen">
+
+      <!-- The reference frame of the mock-up pose. -->
+      <param name="reference_frame" type="str" value="$(arg target_pose_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~mock_up_pose" to="/$(arg node_name)/target_pose"/>
+    </node>
+  </group>
+</launch>

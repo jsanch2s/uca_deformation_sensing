@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="100"/>
+  <arg name="gains" default="[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"/>
+  <arg name="limits" default="[1.0, 1.0, 1.0, 0.2, 0.2, 0.2]"/>
+  <arg name="sync" default="false"/>
+  <arg name="pose_frame" default="map"/>
+  <arg name="reference_frame" default="map"/>
+  <arg name="node_name" default="pose_controller"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_pose_control" type="pose_controller"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+
+      <!-- The twist will be described with respect to this frame. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- Proportional gains for each of the six dimensions. -->
+      <rosparam param="gains" subst_value="True"> $(arg gains)</rosparam>
+
+      <!-- Velocity limits for each of the six dimensions (in m/s, rad/s). -->
+      <rosparam param="limits" subst_value="True"> $(arg limits)</rosparam>
+
+      <!-- Whether to synchronize all velocities such that they reach the target
+      at the same time. -->
+      <param name="sync" type="bool" value="$(arg sync)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+
+    <node pkg="udom_pose_control" type="pose_mock_up_gui"
+          name="pose_mock_up_gui" output="screen" machine="$(arg machine)">
+
+      <!-- The reference frame of the mock-up pose. -->
+      <param name="reference_frame" type="str" value="$(arg pose_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~mock_up_pose" to="/$(arg node_name)/target_pose"/>
+    </node>
+
+    <node pkg="udom_pose_control" type="pose_mock_up_gui"
+          name="pose_mock_up_gui_2" output="screen" machine="$(arg machine)">
+
+      <!-- The reference frame of the mock-up pose. -->
+      <param name="reference_frame" type="str" value="$(arg pose_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~mock_up_pose" to="/$(arg node_name)/current_pose"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_pose_control" type="pose_controller"
+          name="$(arg node_name)" output="screen">
+
+      <!-- The twist will be described with respect to this frame. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- Proportional gains for each of the six dimensions. -->
+      <rosparam param="gains" subst_value="True"> $(arg gains)</rosparam>
+
+      <!-- Velocity limits for each of the six dimensions (in m/s, rad/s). -->
+      <rosparam param="limits" subst_value="True"> $(arg limits)</rosparam>
+
+      <!-- Whether to synchronize all velocities such that they reach the target
+      at the same time. -->
+      <param name="sync" type="bool" value="$(arg sync)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+
+    <node pkg="udom_pose_control" type="pose_mock_up_gui"
+          name="pose_mock_up_gui" output="screen">
+
+      <!-- The reference frame of the mock-up pose. -->
+      <param name="reference_frame" type="str" value="$(arg pose_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~mock_up_pose" to="/$(arg node_name)/target_pose"/>
+    </node>
+
+    <node pkg="udom_pose_control" type="pose_mock_up_gui"
+          name="pose_mock_up_gui_2" output="screen">
+
+      <!-- The reference frame of the mock-up pose. -->
+      <param name="reference_frame" type="str" value="$(arg pose_frame)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~mock_up_pose" to="/$(arg node_name)/current_pose"/>
+    </node>
+  </group>
+</launch>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <machine name="jose_pc" address="192.168.100.105" default="true"
+           env-loader="/home/jsanch/projects/ros_ws/indigo_ws/setup_ctt.sh"/>
+  <machine name="shadow_ctt_pc" address="192.168.100.113" user="hand" timeout="30"
+           env-loader="/home/hand/jose_pc/setup_ctt.sh"/>
+</launch>

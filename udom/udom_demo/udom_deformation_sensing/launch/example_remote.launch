@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <machine name="jose_pc" address="jsanch-HP-ZBook-15-G2" default="true"
+           env-loader="/home/jsanch/projects/ros_ws/indigo_ws/setup_ctt.sh"/>
+  <machine name="shadow_ctt_pc" address="hand-OptiPlex-7040" user="hand" timeout="20"
+           env-loader="/home/hand/jose_pc/setup_ctt.sh"/>
+
+  <node name="listener" pkg="rospy_tutorials" type="listener.py"
+        output="screen"/>
+  <node machine="shadow_ctt_pc" name="talker" pkg="rospy_tutorials" type="talker.py"
+        output="screen"/>
+</launch>

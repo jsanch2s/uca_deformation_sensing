@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_deformation_control)/launch/deformation_control_example.launch">
+    <arg name="loop_rate" default="10"/>
+  </include>
+
+  <test pkg="udom_deformation_control" type="deformation_control_demo_test.py"
+        test-name="test_deformation_control_demo">
+
+    <remap from="~mesh" to="/udom_deformation_control/mesh"/>
+    <remap from="~twist" to="/udom_deformation_control/twist"/>
+    <remap from="~event_out" to="/udom_deformation_control/event_in"/>
+    <remap from="~wrench_in" to="/sensor_readings_filtered"/>
+    <remap from="~robot_data" to="/robot_data"/>
+    <remap from="~current_pose" to="/udom_deformation_control/pose_controller/current_pose"/>
+  </test>
+</launch>

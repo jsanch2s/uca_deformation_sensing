@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_force_estimation.coordinator
+
+
+if __name__ == '__main__':
+    udom_force_estimation.coordinator.main()

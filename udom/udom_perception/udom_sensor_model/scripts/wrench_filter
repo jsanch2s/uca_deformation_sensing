@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_sensor_model.wrench_filter_node
+
+
+if __name__ == '__main__':
+    udom_sensor_model.wrench_filter_node.main()

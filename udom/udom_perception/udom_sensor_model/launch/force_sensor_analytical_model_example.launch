@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="500"/>
+  <arg name="node_name" default="force_sensor_model"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="force_sensor_analytical_model"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+      <rosparam command="load"
+                file="$(find udom_sensor_model)/config/identification_parameters.yaml"/>
+
+      <!-- Transformation matrix relating the end-effector to the sensor frame. -->
+      <param name="ee_to_sensor_transform" type="str" value="transform_ee_s"/>
+
+      <!-- Gravity vector expressed on the robot's base frame. -->
+      <param name="gravity_vector" type="str" value="gravity_base"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="force_sensor_analytical_model"
+          name="$(arg node_name)" output="screen">
+      <rosparam command="load"
+                file="$(find udom_sensor_model)/config/identification_parameters.yaml"/>
+
+      <!-- Transformation matrix relating the end-effector to the sensor frame. -->
+      <param name="ee_to_sensor_transform" type="str" value="transform_ee_s"/>
+
+      <!-- Gravity vector expressed on the robot's base frame. -->
+      <param name="gravity_vector" type="str" value="gravity_base"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+</launch>

@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_grasping.coordinator
+
+
+if __name__ == '__main__':
+    udom_grasping.coordinator.main()

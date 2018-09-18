@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_geometric_transformation)/launch/pose_extractor_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="reference_frame" default="map"/>
+    <arg name="nodes" default="[1,2,3]"/>
+  </include>
+
+  <test pkg="udom_geometric_transformation" type="pose_extractor_node_test.py"
+        test-name="test_pose_extractor">
+
+    <remap from="~component_output" to="/pose_extractor/pose"/>
+    <remap from="~event_out" to="/pose_extractor/event_in"/>
+    <remap from="~mesh" to="/pose_extractor/mesh"/>
+  </test>
+</launch>

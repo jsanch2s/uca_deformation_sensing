@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="loop_rate" default="100"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Topic relay input(s). -->
+  <remap from="/udom_force_estimation/topic_relay/wrench_in"
+         to="/udom_force_estimation/wrench_in"/>
+  <!-- Topic relay output(s). -->
+  <remap from="/udom_force_estimation/topic_relay/wrench_out"
+         to="/udom_force_estimation/wrench_out"/>
+
+  <!-- Tactile demuxers input(s). -->
+  <remap from="/udom_force_estimation/ff_tactile_demux/tactile_data_in"
+         to="/udom_force_estimation/tactile_data_in"/>
+  <remap from="/udom_force_estimation/mf_tactile_demux/tactile_data_in"
+         to="/udom_force_estimation/tactile_data_in"/>
+  <remap from="/udom_force_estimation/rf_tactile_demux/tactile_data_in"
+         to="/udom_force_estimation/tactile_data_in"/>
+  <remap from="/udom_force_estimation/lf_tactile_demux/tactile_data_in"
+         to="/udom_force_estimation/tactile_data_in"/>
+  <remap from="/udom_force_estimation/th_tactile_demux/tactile_data_in"
+         to="/udom_force_estimation/tactile_data_in"/>
+
+  <!-- Tactile sensor models input(s). -->
+  <remap from="/udom_force_estimation/ff_tactile_demux/tactile_data_out"
+         to="/udom_force_estimation/first_finger_sensor_model/tactile_data"/>
+  <remap from="/udom_force_estimation/mf_tactile_demux/tactile_data_out"
+         to="/udom_force_estimation/middle_finger_sensor_model/tactile_data"/>
+  <remap from="/udom_force_estimation/rf_tactile_demux/tactile_data_out"
+         to="/udom_force_estimation/ring_finger_sensor_model/tactile_data"/>
+  <remap from="/udom_force_estimation/lf_tactile_demux/tactile_data_out"
+         to="/udom_force_estimation/lf_tactile_sensor_model/tactile_data"/>
+  <remap from="/udom_force_estimation/th_tactile_demux/tactile_data_out"
+         to="/udom_force_estimation/thumb_sensor_model/tactile_data"/>
+
+  <!-- Force estimation pipeline. -->
+  <group ns="udom_force_estimation">
+    <!-- Coordinator. -->
+    <node pkg="udom_force_estimation" type="coordinator_node"
+          name="coordinator" output="screen">
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Remap topics to interface with the coordinator. -->
+      <remap from="~event_in" to="/udom_force_estimation/event_in"/>
+      <remap from="~event_out" to="/udom_force_estimation/event_out"/>
+
+      <!-- Remap topics to trigger components. -->
+      <remap from="~start_sensor_model_ff"
+             to="/udom_force_estimation/first_finger_sensor_model/event_in"/>
+      <remap from="~start_sensor_model_mf"
+             to="/udom_force_estimation/middle_finger_sensor_model/event_in"/>
+      <remap from="~start_sensor_model_rf"
+             to="/udom_force_estimation/ring_finger_sensor_model/event_in"/>
+      <remap from="~start_sensor_model_lf"
+             to="/udom_force_estimation/lf_tactile_sensor_model/event_in"/>
+      <remap from="~start_sensor_model_th"
+             to="/udom_force_estimation/thumb_sensor_model/event_in"/>
+      <remap from="~start_tactile_demux_ff"
+             to="/udom_force_estimation/ff_tactile_demux/event_in"/>
+      <remap from="~start_tactile_demux_mf"
+             to="/udom_force_estimation/mf_tactile_demux/event_in"/>
+      <remap from="~start_tactile_demux_rf"
+             to="/udom_force_estimation/rf_tactile_demux/event_in"/>
+      <remap from="~start_tactile_demux_lf"
+             to="/udom_force_estimation/lf_tactile_demux/event_in"/>
+      <remap from="~start_tactile_demux_th"
+             to="/udom_force_estimation/th_tactile_demux/event_in"/>
+      <remap from="~start_topic_relay"
+             to="/udom_force_estimation/topic_relay/event_in"/>
+
+      <!-- Remap topics to get feedback from components. -->
+      <remap from="~sensor_model_ff_status"
+             to="/udom_force_estimation/first_finger_sensor_model/event_out"/>
+      <remap from="~sensor_model_mf_status"
+             to="/udom_force_estimation/middle_finger_sensor_model/event_out"/>
+      <remap from="~sensor_model_rf_status"
+             to="/udom_force_estimation/ring_finger_sensor_model/event_out"/>
+      <remap from="~sensor_model_lf_status"
+             to="/udom_force_estimation/lf_tactile_sensor_model/event_out"/>
+      <remap from="~sensor_model_th_status"
+             to="/udom_force_estimation/thumb_sensor_model/event_out"/>
+      <remap from="~tactile_demux_ff_status"
+             to="/udom_force_estimation/ff_tactile_demux/event_out"/>
+      <remap from="~tactile_demux_mf_status"
+             to="/udom_force_estimation/mf_tactile_demux/event_out"/>
+      <remap from="~tactile_demux_rf_status"
+             to="/udom_force_estimation/rf_tactile_demux/event_out"/>
+      <remap from="~tactile_demux_lf_status"
+             to="/udom_force_estimation/lf_tactile_demux/event_out"/>
+      <remap from="~tactile_demux_th_status"
+             to="/udom_force_estimation/th_tactile_demux/event_out"/>
+      <remap from="~topic_relay_status"
+             to="/udom_force_estimation/topic_relay/event_out"/>
+    </node>
+
+    <!-- Topic relay (remove offset value). -->
+    <include
+      file="$(find udom_topic_tools)/launch/topic_relay_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="topic_relay" />
+    </include>
+
+    <!-- Tactile demuxers. -->
+    <!-- First finger tactile demux. -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_index" default="0" />
+      <arg name="sensor_frame" default="rh_ff_sensor" />
+      <arg name="node_name" default="ff_tactile_demux" />
+    </include>
+
+    <!-- Middle finger tactile demux. -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_index" default="1" />
+      <arg name="sensor_frame" default="rh_mf_sensor" />
+      <arg name="node_name" default="mf_tactile_demux" />
+    </include>
+
+    <!-- Ring finger tactile demux. -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_index" default="2" />
+      <arg name="sensor_frame" default="rh_rf_sensor" />
+      <arg name="node_name" default="rf_tactile_demux" />
+    </include>
+
+    <!-- Little finger tactile demux. -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_index" default="3" />
+      <arg name="sensor_frame" default="rh_lf_sensor" />
+      <arg name="node_name" default="lf_tactile_demux" />
+    </include>
+
+    <!-- Thumb finger tactile demux. -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_index" default="4" />
+      <arg name="sensor_frame" default="rh_th_sensor" />
+      <arg name="node_name" default="th_tactile_demux" />
+    </include>
+
+    <!-- Sensor models. -->
+    <!-- First finger sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_model" default="BioTacSimple" />
+      <arg name="node_name" default="first_finger_sensor_model" />
+    </include>
+
+    <!-- Middle finger sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_model" default="BioTacSimple" />
+      <arg name="node_name" default="middle_finger_sensor_model" />
+    </include>
+
+    <!-- Ring finger sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_model" default="BioTacSimple" />
+      <arg name="node_name" default="ring_finger_sensor_model" />
+    </include>
+
+    <!-- Little finger sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_model" default="BioTacSimple" />
+      <arg name="node_name" default="little_finger_sensor_model" />
+    </include>
+
+    <!-- Thumb sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_model" default="BioTacSimple" />
+      <arg name="node_name" default="thumb_sensor_model" />
+    </include>
+  </group>
+
+  <!-- Visualization nodes. -->
+  <include
+    file="$(find udom_visualization)/launch/wrenches_visualizer_example.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+  </include>
+</launch>

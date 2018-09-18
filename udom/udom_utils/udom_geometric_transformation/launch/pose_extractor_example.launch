@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="reference_frame" default="map"/>
+  <arg name="nodes" default="[1,2,3]"/>
+  <arg name="zero_based" default="true"/>
+  <arg name="flip_pose" default="true"/>
+  <arg name="rotate_pose" default="[0.0, 0.0, 0.0]"/>
+  <arg name="rotation_axes" default="xyz"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_geometric_transformation" type="pose_extractor"
+          name="pose_extractor" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Reference frame of the mesh. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- Indices of the nodes on the mesh to extract the pose. -->
+      <rosparam param="nodes" subst_value="True"> $(arg nodes)</rosparam>
+
+      <!-- Whether the indices are specified on zero-based or one-based. -->
+      <param name="zero_based" type="str" value="$(arg zero_based)"/>
+
+      <!-- Inverts the the normal of the pose if True.. -->
+      <param name="flip_pose" type="bool" value="$(arg flip_pose)"/>
+
+      <!-- Rotate the pose around the specified axes in the given order (in degrees) when
+        an 'e_rotate' event is received.. -->
+      <rosparam param="rotate_pose" subst_value="True"> $(arg rotate_pose)</rosparam>
+
+      <!-- Axes on which the rotation will be applied. -->
+      <param name="rotation_axes" type="str" value="$(arg rotation_axes)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_geometric_transformation" type="pose_extractor"
+          name="pose_extractor" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Reference frame of the mesh. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- Indices of the nodes on the mesh to extract the pose. -->
+      <rosparam param="nodes" subst_value="True"> $(arg nodes)</rosparam>
+
+      <!-- Whether the indices are specified on zero-based or one-based. -->
+      <param name="zero_based" type="str" value="$(arg zero_based)"/>
+
+      <!-- Inverts the the normal of the pose if True.. -->
+      <param name="flip_pose" type="bool" value="$(arg flip_pose)"/>
+
+      <!-- Rotate the pose around the specified axes in the given order (in degrees) when
+        an 'e_rotate' event is received.. -->
+      <rosparam param="rotate_pose" subst_value="True"> $(arg rotate_pose)</rosparam>
+
+      <!-- Axes on which the rotation will be applied. -->
+      <param name="rotation_axes" type="str" value="$(arg rotation_axes)"/>
+    </node>
+  </group>
+</launch>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="10"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="reference_frame" default="map"/>
+  <arg name="target_frame" default="link_1"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_geometric_transformation" type="transform_to_pose_converter"
+          name="transform_to_pose_converter" output="screen" machine="$(arg machine)">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Maximum duration to wait for a transform (in seconds). -->
+      <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+
+      <!-- Frame on which the target_frame will be expressed. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- The frame which will be expressed with respect to the reference_frame. -->
+      <param name="target_frame" type="str" value="$(arg target_frame)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_geometric_transformation" type="transform_to_pose_converter"
+          name="transform_to_pose_converter" output="screen">
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Maximum duration to wait for a transform (in seconds). -->
+      <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+
+      <!--Reference frame of the mesh. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- The frame which will be expressed with respect to the reference_frame. -->
+      <param name="target_frame" type="str" value="$(arg target_frame)"/>
+    </node>
+  </group>
+</launch>

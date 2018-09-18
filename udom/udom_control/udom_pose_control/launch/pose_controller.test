@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_pose_control)/launch/pose_controller_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="wait_for_transform" default="5"/>
+    <arg name="reference_frame" default="end_effector_frame"/>
+  </include>
+
+  <test pkg="udom_pose_control" type="pose_controller_test.py"
+        test-name="test_pose_controller">
+
+    <remap from="~component_output" to="/pose_controller/twist_out"/>
+    <remap from="~event_out" to="/pose_controller/event_in"/>
+    <remap from="~current_pose" to="/pose_controller/current_pose"/>
+    <remap from="~target_pose" to="/pose_controller/target_pose"/>
+  </test>
+</launch>

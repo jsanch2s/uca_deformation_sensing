@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="deformation_control" default="false"/>
+  <arg name="object_frame" default="object"/>
+  <arg name="reference_frame" default="kuka_lwr_right_base_link"/>
+  <arg name="contact_nodes" default="[210, 187, 211]"/>
+  <arg name="nodes_pose_estimation" default="[210, 187, 211]"/>
+  <arg name="extracted_pose_rotation" default="[-90, 0, 180]"/>
+  <arg name="extracted_pose_rotation_axes" default="xyz"/>
+  <arg name="tf_period" default="5"/>
+
+  <!-- Set transformations (x y z yaw pitch roll parent child ms). -->
+  <!-- Object w.r.t the base frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="object_frame_broadcaster"
+        args="0.652 0.311 1.407 3.141592 0 -1.570796 $(arg reference_frame) $(arg object_frame) $(arg tf_period)"/>
+
+    <include file="$(find udom_deformation_control)/launch/control_and_sensing.launch">
+      <arg name="deformation_control" default="$(arg deformation_control)"/>
+      <arg name="contact_nodes" default="$(arg contact_nodes)"/>
+      <arg name="nodes_pose_estimation" default="$(arg nodes_pose_estimation)"/>
+      <arg name="extracted_pose_rotation" default="$(arg extracted_pose_rotation)"/>
+      <arg name="extracted_pose_rotation_axes" default="$(arg extracted_pose_rotation_axes)"/>
+    </include>
+</launch>

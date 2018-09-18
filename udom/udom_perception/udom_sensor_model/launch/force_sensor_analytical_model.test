@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find udom_sensor_model)/launch/force_sensor_analytical_model_example.launch"/>
+
+  <test pkg="udom_sensor_model" type="force_sensor_model_node_test.py"
+        test-name="test_force_sensor_model">
+
+    <remap from="~wrench_out" to="/force_sensor_model/wrench_out"/>
+    <remap from="~force_array" to="/force_sensor_model/force_array"/>
+    <remap from="~event_out" to="/force_sensor_model/event_in"/>
+    <remap from="~robot_data" to="/force_sensor_model/robot_data"/>
+    <remap from="~wrench_in" to="/force_sensor_model/wrench_in"/>
+  </test>
+</launch>

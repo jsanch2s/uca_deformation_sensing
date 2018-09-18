@@ -1,0 +1,610 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Set to true if a remote machine is needed. -->
+  <arg name="use_remote_machine" default="false"/>
+
+  <!-- Set to false if sensing is not needed (e.g. just to record an experiment). -->
+  <arg name="sensing" default="true"/>
+
+  <!-- Set to true if the data has been previously recorded. -->
+  <arg name="data_recorded" default="false"/>
+
+  <!-- Global parameters. -->
+  <arg name="jose_pc" default="jose_pc"/>
+  <arg name="shadow_ctt_pc" default="shadow_ctt_pc"/>
+  <arg name="loop_rate" default="500"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="mesh_filename" default="cube_hard"/>
+  <arg name="reference_frame" default="test_rig"/>
+  <arg name="object_frame" default="object"/>
+  <arg name="robot_frame" default="world"/>
+  <arg name="cam_frame" default="camera"/>
+  <arg name="rgbd_frame" default="rgbd_sensor"/>
+  <arg name="first_finger_frame" default="rh_ff_sensor"/>
+  <arg name="middle_finger_frame" default="rh_mf_sensor"/>
+  <arg name="ring_finger_frame" default="rh_rf_sensor"/>
+  <arg name="little_finger_frame" default="rh_lf_sensor"/>
+  <arg name="thumb_frame" default="rh_th_sensor"/>
+  <!-- How often to publish the transforms (in milliseconds).-->
+  <arg name="tf_period" default="2"/>
+  <arg name="constrained_nodes" default="[
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+    25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+    47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
+    69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87]"/>
+
+  <!-- If we are using remote machines. -->
+  <group if="$(arg use_remote_machine)">
+    <include file="$(find udom_deformation_sensing)/launch/$(env ROBOT).machine" />
+  </group>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Tactile demux input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_deformation_sensing_full/middle_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_deformation_sensing_full/ring_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_deformation_sensing_full/little_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_deformation_sensing_full/thumb_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+
+  <!-- Sensor model input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model/tactile_data"
+         to="/udom_deformation_sensing_full/first_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_deformation_sensing_full/middle_finger_sensor_model/tactile_data"
+         to="/udom_deformation_sensing_full/middle_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_deformation_sensing_full/ring_finger_sensor_model/tactile_data"
+         to="/udom_deformation_sensing_full/ring_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_deformation_sensing_full/little_finger_sensor_model/tactile_data"
+         to="/udom_deformation_sensing_full/little_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_deformation_sensing_full/thumb_sensor_model/tactile_data"
+         to="/udom_deformation_sensing_full/thumb_sensor/tactile_data_out"/>
+
+  <!-- Contact model input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_sensor_model/contact_info"
+         to="/udom_deformation_sensing_full/first_finger_contact_model/contact_info"/>
+  <remap from="/udom_deformation_sensing_full/middle_finger_sensor_model/contact_info"
+         to="/udom_deformation_sensing_full/middle_finger_contact_model/contact_info"/>
+  <remap from="/udom_deformation_sensing_full/ring_finger_sensor_model/contact_info"
+         to="/udom_deformation_sensing_full/ring_finger_contact_model/contact_info"/>
+  <remap from="/udom_deformation_sensing_full/little_finger_sensor_model/contact_info"
+         to="/udom_deformation_sensing_full/little_finger_contact_model/contact_info"/>
+  <remap from="/udom_deformation_sensing_full/thumb_sensor_model/contact_info"
+         to="/udom_deformation_sensing_full/thumb_contact_model/contact_info"/>
+
+  <!-- Force merger input(s). -->
+  <remap from="/udom_deformation_sensing_full/first_finger_contact_model/force_array"
+         to="/udom_deformation_sensing_full/force_merger/force_array_first_finger"/>
+  <remap from="/udom_deformation_sensing_full/middle_finger_contact_model/force_array"
+         to="/udom_deformation_sensing_full/force_merger/force_array_middle_finger"/>
+  <remap from="/udom_deformation_sensing_full/ring_finger_contact_model/force_array"
+         to="/udom_deformation_sensing_full/force_merger/force_array_ring_finger"/>
+  <remap from="/udom_deformation_sensing_full/little_finger_contact_model/force_array"
+         to="/udom_deformation_sensing_full/force_merger/force_array_little_finger"/>
+  <remap from="/udom_deformation_sensing_full/thumb_contact_model/force_array"
+         to="/udom_deformation_sensing_full/force_merger/force_array_thumb"/>
+
+  <!-- Force transformer input(s). -->
+  <remap from="/udom_deformation_sensing_full/force_merger/force_multi_array"
+         to="/udom_deformation_sensing_full/force_transformer/force_in"/>
+
+  <!-- Nodal force calculator input(s). -->
+  <remap from="/udom_deformation_sensing_full/force_transformer/force_out"
+         to="/udom_deformation_sensing_full/nodal_force_calculator/force_in"/>
+  <remap from="/udom_deformation_sensing_full/nodal_force_calculator/mesh"
+         to="/udom_deformation_sensing_full/mesh_fast"/>
+
+  <!-- Topic throttle input(s). -->
+  <remap from="/udom_deformation_sensing_full/topic_throttle/mesh_in"
+         to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Deformation model input(s). -->
+  <remap from="/udom_deformation_sensing_full/nodal_force_calculator/force_out"
+         to="/udom_deformation_sensing_full/deformation_model/force_info"/>
+
+  <!-- Deformation model output(s). -->
+  <remap from="/udom_deformation_sensing_full/deformation_model/mesh"
+         to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Topic throttle output(s). -->
+  <remap from="/udom_deformation_sensing_full/topic_throttle/mesh_out"
+         to="/udom_deformation_sensing_full/mesh_fast"/>
+
+  <!-- Mesh visualizer input(s). -->
+  <remap from="/mesh_visualizer/mesh" to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Points visualizer input(s). -->
+  <remap from="/points_visualizer/points_in"
+         to="/udom_deformation_sensing_full/deformation_model/constrained_nodes_visualization"/>
+
+  <!-- Mesh visualizer output(s). -->
+  <remap from="/mesh_visualizer/points" to="/udom_deformation_sensing_full/points"/>
+
+  <!-- Points visualizer output(s). -->
+  <remap from="/points_visualizer/points_out"
+         to="/udom_deformation_sensing_full/constrained_points"/>
+
+  <!-- In case the data has been previously recorded. -->
+  <group if="$(arg data_recorded)">
+    <!-- Topic resync (to make sure the time stamp of TF is up to date). -->
+    <include
+      file="$(find udom_topic_tools)/launch/topic_resync_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="input_topic" default="tf_old"/>
+      <arg name="output_topic" default="tf"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+  </group>
+
+  <!-- In case the data has not been previously recorded we can control the hand. -->
+  <group unless="$(arg data_recorded)">
+    <!-- GUI to open/close the hand. -->
+    <include
+      file="$(find ucr_experiment_evaluation)/launch/grasp_deformable_object.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+  </group>
+
+  <!-- Deformation sensing pipeline. -->
+  <group ns="udom_deformation_sensing_full" if="$(arg sensing)">
+    <!-- Tactile demux 1 (first finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg first_finger_frame)"/>
+      <arg name="node_name" default="first_finger_sensor"/>
+      <arg name="sensor_index" default="0"/>
+    </include>
+
+    <!-- Tactile demux 2 (middle finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg middle_finger_frame)"/>
+      <arg name="node_name" default="middle_finger_sensor"/>
+      <arg name="sensor_index" default="1"/>
+    </include>
+
+    <!-- Tactile demux 3 (ring finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg ring_finger_frame)"/>
+      <arg name="node_name" default="ring_finger_sensor"/>
+      <arg name="sensor_index" default="2"/>
+    </include>
+
+    <!-- Tactile demux 4 (little finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg little_finger_frame)"/>
+      <arg name="node_name" default="little_finger_sensor"/>
+      <arg name="sensor_index" default="3"/>
+    </include>
+
+    <!-- Tactile demux 5 (thumb). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg thumb_frame)"/>
+      <arg name="node_name" default="thumb_sensor"/>
+      <arg name="sensor_index" default="4"/>
+    </include>
+
+    <!-- Sensor model 1 (first finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+    </include>
+
+    <!-- Sensor model 2 (middle finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="middle_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+    </include>
+
+    <!-- Sensor model 3 (ring finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="ring_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+    </include>
+
+    <!-- Sensor model 4 (little finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="little_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+    </include>
+
+    <!-- Sensor model 5 (thumb). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="thumb_sensor_model"/>
+      <arg name="sensor_model" default="BioTacRNN"/>
+    </include>
+
+    <!-- Contact model 1 (first finger). -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_contact_model"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Contact model 2 (middle finger). -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="middle_finger_contact_model"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Contact model 3 (ring finger). -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="ring_finger_contact_model"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Contact model 4 (little finger). -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="little_finger_contact_model"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Contact model 5 (thumb). -->
+    <include file="$(find udom_contact_model)/launch/contact_model_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="thumb_contact_model"/>
+      <arg name="contact_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Force merger. -->
+    <include file="$(find udom_topic_tools)/launch/force_merger_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="config_file" default="$(find udom_topic_tools)/config/full.yaml"/>
+    </include>
+
+    <!-- Force transformer. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/force_transformer_example.launch">
+      <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="wait_for_transform" default="$(arg wait_for_transform)"/>
+      <arg name="reference_frame" default="$(arg reference_frame)"/>
+    </include>
+
+    <!-- Nodal force calculator. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/nodal_force_calculator_example.launch">
+      <arg name="machine" default="$(arg shadow_ctt_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Topic throttle. -->
+    <include
+      file="$(find udom_topic_tools)/launch/topic_throttle_example.launch">
+      <arg name="machine" default="$(arg shadow_ctt_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Deformation model. -->
+    <include
+      file="$(find udom_deformation_modeling)/launch/deformation_model_example.launch">
+      <arg name="machine" default="$(arg shadow_ctt_pc)" if="$(arg use_remote_machine)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="mesh_filename" default="$(arg mesh_filename).veg"/>
+      <arg name="constrained_nodes" default="$(arg constrained_nodes)"/>
+    </include>
+
+    <!-- Coordinator. -->
+    <group if="$(arg use_remote_machine)">
+      <node pkg="udom_deformation_sensing" type="coordinator_full_node"
+            name="coordinator" output="screen" machine="$(arg jose_pc)">
+        <!-- Node cycle rate (in Hz). -->
+        <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+        <!-- Remap topics to interface with the coordinator. -->
+        <remap from="~event_in" to="/udom_deformation_sensing_full/event_in"/>
+        <remap from="~event_out" to="/udom_deformation_sensing_full/event_out"/>
+        <remap from="~tactile_data" to="/udom_deformation_sensing_full/tactile_data"/>
+        <remap from="~mesh" to="/udom_deformation_sensing_full/mesh"/>
+
+        <!-- Remap topics to trigger components. -->
+        <remap from="~start_first_finger_sensor"
+               to="/udom_deformation_sensing_full/first_finger_sensor/event_in"/>
+        <remap from="~start_middle_finger_sensor"
+               to="/udom_deformation_sensing_full/middle_finger_sensor/event_in"/>
+        <remap from="~start_ring_finger_sensor"
+               to="/udom_deformation_sensing_full/ring_finger_sensor/event_in"/>
+        <remap from="~start_little_finger_sensor"
+               to="/udom_deformation_sensing_full/little_finger_sensor/event_in"/>
+        <remap from="~start_thumb_sensor"
+               to="/udom_deformation_sensing_full/thumb_sensor/event_in"/>
+
+        <remap from="~start_first_finger_sensor_model"
+               to="/udom_deformation_sensing_full/first_finger_sensor_model/event_in"/>
+        <remap from="~start_middle_finger_sensor_model"
+               to="/udom_deformation_sensing_full/middle_finger_sensor_model/event_in"/>
+        <remap from="~start_ring_finger_sensor_model"
+               to="/udom_deformation_sensing_full/ring_finger_sensor_model/event_in"/>
+        <remap from="~start_little_finger_sensor_model"
+               to="/udom_deformation_sensing_full/little_finger_sensor_model/event_in"/>
+        <remap from="~start_thumb_sensor_model"
+               to="/udom_deformation_sensing_full/thumb_sensor_model/event_in"/>
+
+        <remap from="~start_first_finger_contact_model"
+               to="/udom_deformation_sensing_full/first_finger_contact_model/event_in"/>
+        <remap from="~start_middle_finger_contact_model"
+               to="/udom_deformation_sensing_full/middle_finger_contact_model/event_in"/>
+        <remap from="~start_ring_finger_contact_model"
+               to="/udom_deformation_sensing_full/ring_finger_contact_model/event_in"/>
+        <remap from="~start_little_finger_contact_model"
+               to="/udom_deformation_sensing_full/little_finger_contact_model/event_in"/>
+        <remap from="~start_thumb_contact_model"
+               to="/udom_deformation_sensing_full/thumb_contact_model/event_in"/>
+
+        <remap from="~start_force_merger"
+               to="/udom_deformation_sensing_full/force_merger/event_in"/>
+        <remap from="~start_force_transformer"
+               to="/udom_deformation_sensing_full/force_transformer/event_in"/>
+        <remap from="~start_nodal_force_calculator"
+               to="/udom_deformation_sensing_full/nodal_force_calculator/event_in"/>
+        <remap from="~start_topic_throttle"
+               to="/udom_deformation_sensing_full/topic_throttle/event_in"/>
+        <remap from="~start_deformation_model"
+               to="/udom_deformation_sensing_full/deformation_model/event_in"/>
+
+        <!-- Remap topics to get feedback from components. -->
+        <remap from="~first_finger_sensor_status"
+               to="/udom_deformation_sensing_full/first_finger_sensor/event_out"/>
+        <remap from="~middle_finger_sensor_status"
+               to="/udom_deformation_sensing_full/middle_finger_sensor/event_out"/>
+        <remap from="~ring_finger_sensor_status"
+               to="/udom_deformation_sensing_full/ring_finger_sensor/event_out"/>
+        <remap from="~little_finger_sensor_status"
+               to="/udom_deformation_sensing_full/little_finger_sensor/event_out"/>
+        <remap from="~thumb_sensor_status"
+               to="/udom_deformation_sensing_full/thumb_sensor/event_out"/>
+
+        <remap from="~first_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/first_finger_sensor_model/event_out"/>
+        <remap from="~middle_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/middle_finger_sensor_model/event_out"/>
+        <remap from="~ring_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/ring_finger_sensor_model/event_out"/>
+        <remap from="~little_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/little_finger_sensor_model/event_out"/>
+        <remap from="~thumb_sensor_model_status"
+               to="/udom_deformation_sensing_full/thumb_sensor_model/event_out"/>
+
+        <remap from="~first_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/first_finger_contact_model/event_out"/>
+        <remap from="~middle_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/middle_finger_contact_model/event_out"/>
+        <remap from="~ring_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/ring_finger_contact_model/event_out"/>
+        <remap from="~little_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/little_finger_contact_model/event_out"/>
+        <remap from="~thumb_contact_model_status"
+               to="/udom_deformation_sensing_full/thumb_contact_model/event_out"/>
+
+        <remap from="~force_merger_status"
+               to="/udom_deformation_sensing_full/force_merger/event_out"/>
+        <remap from="~force_transformer_status"
+               to="/udom_deformation_sensing_full/force_transformer/event_out"/>
+        <remap from="~nodal_force_calculator_status"
+               to="/udom_deformation_sensing_full/nodal_force_calculator/event_out"/>
+        <remap from="~topic_throttle_status"
+               to="/udom_deformation_sensing_full/topic_throttle/event_out"/>
+        <remap from="~deformation_model_status"
+               to="/udom_deformation_sensing_full/deformation_model/event_out"/>
+      </node>
+    </group>
+
+    <group unless="$(arg use_remote_machine)">
+      <node pkg="udom_deformation_sensing" type="coordinator_full_node"
+                name="coordinator" output="screen">
+        <!-- Node cycle rate (in Hz). -->
+        <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+        <!-- Remap topics to interface with the coordinator. -->
+        <remap from="~event_in" to="/udom_deformation_sensing_full/event_in"/>
+        <remap from="~event_out" to="/udom_deformation_sensing_full/event_out"/>
+        <remap from="~tactile_data" to="/udom_deformation_sensing_full/tactile_data"/>
+        <remap from="~mesh" to="/udom_deformation_sensing_full/mesh"/>
+
+        <!-- Remap topics to trigger components. -->
+        <remap from="~start_first_finger_sensor"
+               to="/udom_deformation_sensing_full/first_finger_sensor/event_in"/>
+        <remap from="~start_middle_finger_sensor"
+               to="/udom_deformation_sensing_full/middle_finger_sensor/event_in"/>
+        <remap from="~start_ring_finger_sensor"
+               to="/udom_deformation_sensing_full/ring_finger_sensor/event_in"/>
+        <remap from="~start_little_finger_sensor"
+               to="/udom_deformation_sensing_full/little_finger_sensor/event_in"/>
+        <remap from="~start_thumb_sensor"
+               to="/udom_deformation_sensing_full/thumb_sensor/event_in"/>
+
+        <remap from="~start_first_finger_sensor_model"
+               to="/udom_deformation_sensing_full/first_finger_sensor_model/event_in"/>
+        <remap from="~start_middle_finger_sensor_model"
+               to="/udom_deformation_sensing_full/middle_finger_sensor_model/event_in"/>
+        <remap from="~start_ring_finger_sensor_model"
+               to="/udom_deformation_sensing_full/ring_finger_sensor_model/event_in"/>
+        <remap from="~start_little_finger_sensor_model"
+               to="/udom_deformation_sensing_full/little_finger_sensor_model/event_in"/>
+        <remap from="~start_thumb_sensor_model"
+               to="/udom_deformation_sensing_full/thumb_sensor_model/event_in"/>
+
+        <remap from="~start_first_finger_contact_model"
+               to="/udom_deformation_sensing_full/first_finger_contact_model/event_in"/>
+        <remap from="~start_middle_finger_contact_model"
+               to="/udom_deformation_sensing_full/middle_finger_contact_model/event_in"/>
+        <remap from="~start_ring_finger_contact_model"
+               to="/udom_deformation_sensing_full/ring_finger_contact_model/event_in"/>
+        <remap from="~start_little_finger_contact_model"
+               to="/udom_deformation_sensing_full/little_finger_contact_model/event_in"/>
+        <remap from="~start_thumb_contact_model"
+               to="/udom_deformation_sensing_full/thumb_contact_model/event_in"/>
+
+        <remap from="~start_force_merger"
+               to="/udom_deformation_sensing_full/force_merger/event_in"/>
+        <remap from="~start_force_transformer"
+               to="/udom_deformation_sensing_full/force_transformer/event_in"/>
+        <remap from="~start_nodal_force_calculator"
+               to="/udom_deformation_sensing_full/nodal_force_calculator/event_in"/>
+        <remap from="~start_topic_throttle"
+               to="/udom_deformation_sensing_full/topic_throttle/event_in"/>
+        <remap from="~start_deformation_model"
+               to="/udom_deformation_sensing_full/deformation_model/event_in"/>
+
+        <!-- Remap topics to get feedback from components. -->
+        <remap from="~first_finger_sensor_status"
+               to="/udom_deformation_sensing_full/first_finger_sensor/event_out"/>
+        <remap from="~middle_finger_sensor_status"
+               to="/udom_deformation_sensing_full/middle_finger_sensor/event_out"/>
+        <remap from="~ring_finger_sensor_status"
+               to="/udom_deformation_sensing_full/ring_finger_sensor/event_out"/>
+        <remap from="~little_finger_sensor_status"
+               to="/udom_deformation_sensing_full/little_finger_sensor/event_out"/>
+        <remap from="~thumb_sensor_status"
+               to="/udom_deformation_sensing_full/thumb_sensor/event_out"/>
+
+        <remap from="~first_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/first_finger_sensor_model/event_out"/>
+        <remap from="~middle_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/middle_finger_sensor_model/event_out"/>
+        <remap from="~ring_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/ring_finger_sensor_model/event_out"/>
+        <remap from="~little_finger_sensor_model_status"
+               to="/udom_deformation_sensing_full/little_finger_sensor_model/event_out"/>
+        <remap from="~thumb_sensor_model_status"
+               to="/udom_deformation_sensing_full/thumb_sensor_model/event_out"/>
+
+        <remap from="~first_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/first_finger_contact_model/event_out"/>
+        <remap from="~middle_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/middle_finger_contact_model/event_out"/>
+        <remap from="~ring_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/ring_finger_contact_model/event_out"/>
+        <remap from="~little_finger_contact_model_status"
+               to="/udom_deformation_sensing_full/little_finger_contact_model/event_out"/>
+        <remap from="~thumb_contact_model_status"
+               to="/udom_deformation_sensing_full/thumb_contact_model/event_out"/>
+
+        <remap from="~force_merger_status"
+               to="/udom_deformation_sensing_full/force_merger/event_out"/>
+        <remap from="~force_transformer_status"
+               to="/udom_deformation_sensing_full/force_transformer/event_out"/>
+        <remap from="~nodal_force_calculator_status"
+               to="/udom_deformation_sensing_full/nodal_force_calculator/event_out"/>
+        <remap from="~topic_throttle_status"
+               to="/udom_deformation_sensing_full/topic_throttle/event_out"/>
+        <remap from="~deformation_model_status"
+               to="/udom_deformation_sensing_full/deformation_model/event_out"/>
+      </node>
+    </group>
+  </group>
+
+  <!-- Add missing transforms (x y z yaw pitch roll). -->
+  <!-- Robot to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="robot_frame_broadcaster"
+        args="0.0 0.0 0.60 1.570796 -1.570796 1.570796 $(arg reference_frame)
+        $(arg robot_frame) $(arg tf_period)"/>
+
+  <!-- Object to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="object_frame_broadcaster"
+        args="0.49 -0.03 0.60 0 -1.570796 0 $(arg reference_frame) $(arg object_frame)
+        $(arg tf_period)"/>
+
+  <!-- Camera to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="camera_frame_broadcaster"
+        args="0.39 -0.015 0 0 0 0 $(arg reference_frame) $(arg cam_frame)
+        $(arg tf_period)"/>
+
+  <!-- RGB-D sensor to the reference frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="rgbd_frame_broadcaster"
+        args="0.39 0.015 0 0 0 0 $(arg reference_frame) $(arg rgbd_frame)
+        $(arg tf_period)"/>
+
+  <!-- First finger sensor to finger tip. -->
+  <node pkg="tf" type="static_transform_publisher" name="ff_frame_broadcaster"
+        args="0 0 0 -1.570796 -1.570796 0 rh_fftip $(arg first_finger_frame)
+        $(arg tf_period)"/>
+
+  <!-- Middle finger sensor to finger tip. -->
+  <node pkg="tf" type="static_transform_publisher" name="mf_frame_broadcaster"
+        args="0 0 0 -1.570796 -1.570796 0 rh_mftip $(arg middle_finger_frame)
+        $(arg tf_period)"/>
+
+  <!-- Ring finger sensor to finger tip. -->
+  <node pkg="tf" type="static_transform_publisher" name="rf_frame_broadcaster"
+        args="0 0 0 -1.570796 -1.570796 0 rh_rftip $(arg ring_finger_frame)
+        $(arg tf_period)"/>
+
+  <!-- Little finger sensor to finger tip. -->
+  <node pkg="tf" type="static_transform_publisher" name="lf_frame_broadcaster"
+        args="0 0 0 -1.570796 -1.570796 0 rh_lftip $(arg little_finger_frame)
+        $(arg tf_period)"/>
+
+  <!-- Thumb sensor to finger tip. -->
+  <node pkg="tf" type="static_transform_publisher" name="th_frame_broadcaster"
+        args="0 0 0 -1.570796 -1.570796 0 rh_thtip $(arg thumb_frame) $(arg tf_period)"/>
+
+  <!-- Visualization nodes. -->
+  <include
+    file="$(find udom_visualization)/launch/mesh_visualizer_example.launch">
+    <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="mesh_frame" default="$(arg object_frame)"/>
+    <arg name="scale" default="[0.005, 0.005, 0.005]"/>
+    <arg name="color" default="[0.0, 1.0, 0.0, 0.5]"/>
+  </include>
+
+  <include
+    file="$(find udom_visualization)/launch/wrenches_visualizer_example.launch">
+    <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="input_namespace" default="udom_deformation_sensing_full"/>
+    <arg name="output_namespace" default="udom_deformation_sensing_full"/>
+  </include>
+
+  <include
+    file="$(find udom_visualization)/launch/points_visualizer_example.launch">
+    <arg name="machine" default="$(arg jose_pc)" if="$(arg use_remote_machine)"/>
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="points_frame" default="$(arg object_frame)"/>
+    <arg name="scale" default="[0.005, 0.005, 0.005]"/>
+    <arg name="color" default="[1.0, 0.0, 0.0, 0.9]"/>
+  </include>
+</launch>

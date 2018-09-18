@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="force_threshold_max" default="0.8" />
+  <arg name="force_threshold_min" default="0.3" />
+  <arg name="increment" default="0.05" />
+  <arg name="increment_thumb" default="0.03" />
+  <arg name="loop_rate" default="100" />
+  <arg name="force_feedback" default="false" />
+  <arg name="joint_limits" default="$(find udom_grasp_control)/config/shadow_joint_info.yaml"/>
+
+  <node pkg="udom_grasp_control" type="reactive_grasp"
+        name="reactive_grasp_node" output="screen">
+    <!-- Whether to use force feedback or not. -->
+    <param name="force_feedback" type="bool" value="$(arg force_feedback)"/>
+
+    <!-- Maximum force, if the current force of any finger exceeds this value, then
+         the finger will move backwards (in N). -->
+    <param name="force_threshold_max" type="double" value="$(arg force_threshold_max)"/>
+
+    <!-- Minimum force, if the current force of any finger is less than this value,
+         then the finger will move forwards (in N). -->
+    <param name="force_threshold_max" type="double" value="$(arg force_threshold_max)"/>
+
+    <!-- The value of the joint position increment to move each finger (in radians). -->
+    <param name="increment" type="double" value="$(arg increment)"/>
+
+    <!-- The value of the joint position increment to move the thumb (in radians). -->
+    <param name="increment_thumb" type="double" value="$(arg increment_thumb)"/>
+
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- Configuration file describing the limits of each joint. -->
+    <param name="joint_limits" type="str" value="$(arg joint_limits)"/>
+
+    <remap from="~joint_states" to="/joint_states"/>
+  </node>
+</launch>

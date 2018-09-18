@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="loop_rate" default="500"/>
+  <arg name="mesh_filename" default="test_mesh.veg"/>
+  <arg name="object_frame" default="map"/>
+  <arg name="twist_frame" default="map"/>
+  <arg name="index_start" default="0"/>
+  <arg name="pose_nodes" default="[1, 3, 7]"/>
+  <arg name="constrained_nodes" default="[0, 1, 2, 6, 7, 8, 12, 13, 14, 18, 19, 20]"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Sensor model input(s). -->
+  <remap from="/udom_deformation_control/force_sensor_model/robot_data"
+         to="/robot_data"/>
+  <remap from="/udom_deformation_control/force_sensor_model/wrench_in"
+         to="/sensor_readings_filtered"/>
+
+  <!-- Pose extractor input(s). -->
+  <remap from="/udom_deformation_control/pose_extractor/mesh"
+         to="/udom_deformation_control/mesh"/>
+
+    <!-- Force transformer input(s). -->
+  <remap from="/udom_deformation_control/force_sensor_model/force_array"
+         to="/udom_deformation_control/force_transformer/force_in"/>
+
+  <!-- Nodal force calculator input(s). -->
+  <remap from="/udom_deformation_control/force_transformer/force_out"
+         to="/udom_deformation_control/nodal_force_calculator/force_in"/>
+
+  <!-- Deformation model input(s). -->
+  <remap from="/udom_deformation_control/nodal_force_calculator/force_out"
+         to="/udom_deformation_control/deformation_model/force_info"/>
+  <remap from="/udom_deformation_control/nodal_force_calculator/mesh"
+         to="/udom_deformation_control/mesh"/>
+
+  <!-- Deformation model output(s). -->
+  <remap from="/udom_deformation_control/deformation_model/mesh"
+         to="/udom_deformation_control/mesh"/>
+
+  <!-- Pose extractor output(s). -->
+  <remap from="/udom_deformation_control/pose_extractor/pose"
+         to="/udom_deformation_control/pose_controller/target_pose"/>
+
+  <!-- Pose controller output(s). -->
+  <remap from="/udom_deformation_control/pose_controller/twist_out"
+         to="/udom_deformation_control/twist"/>
+
+  <!-- Mesh visualizer input(s). -->
+  <remap from="/mesh_visualizer/mesh" to="/udom_deformation_control/mesh"/>
+
+  <!-- Points visualizer input(s). -->
+  <remap from="/points_visualizer/points_in"
+         to="/udom_deformation_control/deformation_model/constrained_nodes_visualization"/>
+
+  <!-- Mesh visualizer output(s). -->
+  <remap from="/mesh_visualizer/points" to="/udom_deformation_control/points"/>
+
+  <!-- Points visualizer output(s). -->
+  <remap from="/points_visualizer/points_out" to="/udom_deformation_control/constrained_points"/>
+
+  <!-- Deformation control pipeline. -->
+  <group ns="udom_deformation_control">
+    <!-- Sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/force_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Pose extractor. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/pose_extractor_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Pose controller. -->
+    <include
+      file="$(find udom_pose_control)/launch/pose_controller_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="wait_for_transform" default="0.1"/>
+      <arg name="reference_frame" default="$(arg twist_frame)"/>
+    </include>
+
+    <!-- Force transformer. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/force_transformer_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="wait_for_transform" default="0.1"/>
+      <arg name="reference_frame" default="$(arg object_frame)"/>
+    </include>
+
+    <!-- Nodal force calculator. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/nodal_force_calculator_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Deformation model. -->
+    <include
+      file="$(find udom_deformation_modeling)/launch/deformation_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="mesh_filename" default="$(arg mesh_filename)"/>
+      <arg name="constrained_nodes" default="$(arg constrained_nodes)"/>
+      <arg name="index_start" default="$(arg index_start)"/>
+    </include>
+
+    <!-- Coordinator. -->
+    <node pkg="udom_deformation_control" type="coordinator_node" name="coordinator" output="screen">
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Remap topics to interface with the coordinator. -->
+      <remap from="~event_in" to="/udom_deformation_control/event_in"/>
+      <remap from="~event_out" to="/udom_deformation_control/event_out"/>
+      <remap from="~mesh" to="/udom_deformation_control/mesh"/>
+
+      <!-- Remap topics to trigger components. -->
+      <remap from="~start_sensor_model"
+             to="/udom_deformation_control/force_sensor_model/event_in"/>
+      <remap from="~start_pose_extractor"
+             to="/udom_deformation_control/pose_extractor/event_in"/>
+      <remap from="~start_pose_controller"
+             to="/udom_deformation_control/pose_controller/event_in"/>
+      <remap from="~start_force_transformer"
+             to="/udom_deformation_control/force_transformer/event_in"/>
+      <remap from="~start_nodal_force_calculator"
+             to="/udom_deformation_control/nodal_force_calculator/event_in"/>
+      <remap from="~start_deformation_model"
+             to="/udom_deformation_control/deformation_model/event_in"/>
+
+      <!-- Remap topics to get feedback from components. -->
+      <remap from="~sensor_model_status"
+             to="/udom_deformation_control/force_sensor_model/event_out"/>
+      <remap from="~pose_extractor_status"
+             to="/udom_deformation_control/pose_extractor/event_out"/>
+      <remap from="~pose_controller_status"
+             to="/udom_deformation_control/pose_controller/event_out"/>
+      <remap from="~force_transformer_status"
+             to="/udom_deformation_control/force_transformer/event_out"/>
+      <remap from="~nodal_force_calculator_status"
+             to="/udom_deformation_control/nodal_force_calculator/event_out"/>
+      <remap from="~deformation_model_status"
+             to="/udom_deformation_control/deformation_model/event_out"/>
+    </node>
+  </group>
+</launch>

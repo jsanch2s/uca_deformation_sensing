@@ -1,0 +1,9 @@
+# Gravity vector with respect to the robot base.
+gravity_base: [-9.80509, 0, 0]
+
+# Transform from the End-Effector to the Sensor.
+transform_ee_s: [
+  [1.0, 0.0, 0.0,  0.0],
+  [0.0, 1.0, 0.0,  0.0],
+  [0.0, 0.0, 1.0, -0.04],
+  [0.0, 0.0,  0.0, 1.0]]

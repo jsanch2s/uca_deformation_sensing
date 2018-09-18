@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="100"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="reference_frame" default="end_effector_frame"/>
+  <arg name="gains" default="[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"/>
+  <arg name="limits" default="[1.0, 1.0, 1.0, 0.2, 0.2, 0.2]"/>
+  <arg name="linear_tolerance" default="0.01"/>
+  <arg name="angular_tolerance" default="3.0"/>
+  <arg name="sync" default="false"/>
+  <arg name="node_name" default="pose_controller"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_pose_control" type="pose_controller"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+      <!-- Maximum duration to wait for a transform (in seconds). -->
+      <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+
+      <!-- The twist will be described with respect to this frame. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- Proportional gains for each of the six dimensions. -->
+      <rosparam param="gains" subst_value="True"> $(arg gains)</rosparam>
+
+      <!-- Velocity limits for each of the six dimensions (in m/s, rad/s). -->
+      <rosparam param="limits" subst_value="True"> $(arg limits)</rosparam>
+
+      <!-- Linear tolerance for all dimensions (in meters). -->
+      <param name="linear_tolerance" type="double" value="$(arg linear_tolerance)"/>
+
+      <!-- Angular tolerance for all dimensions (in degrees). -->
+      <param name="angular_tolerance" type="double" value="$(arg angular_tolerance)"/>
+
+      <!-- Whether to synchronize all velocities such that they reach the target
+      at the same time. -->
+      <param name="sync" type="bool" value="$(arg sync)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_pose_control" type="pose_controller"
+          name="$(arg node_name)" output="screen">
+      <!-- Maximum duration to wait for a transform (in seconds). -->
+      <param name="wait_for_transform" type="double" value="$(arg wait_for_transform)"/>
+
+      <!-- The twist will be described with respect to this frame. -->
+      <param name="reference_frame" type="str" value="$(arg reference_frame)"/>
+
+      <!-- Proportional gains for each of the six dimensions. -->
+      <rosparam param="gains" subst_value="True"> $(arg gains)</rosparam>
+
+      <!-- Velocity limits for each of the six dimensions (in m/s, rad/s). -->
+      <rosparam param="limits" subst_value="True"> $(arg limits)</rosparam>
+
+      <!-- Linear tolerance for all dimensions (in meters). -->
+      <param name="linear_tolerance" type="double" value="$(arg linear_tolerance)"/>
+
+      <!-- Angular tolerance for all dimensions (in degrees). -->
+      <param name="angular_tolerance" type="double" value="$(arg angular_tolerance)"/>
+
+      <!-- Whether to synchronize all velocities such that they reach the target
+      at the same time. -->
+      <param name="sync" type="bool" value="$(arg sync)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+</launch>

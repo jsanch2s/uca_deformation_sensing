@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Set to true if the data has been previously recorded. -->
+  <arg name="data_recorded" default="false"/>
+
+  <!-- Global parameters. -->
+  <arg name="loop_rate" default="500"/>
+  <arg name="wait_for_transform" default="0.1"/>
+  <arg name="damping_mass" default="1.0"/>
+  <arg name="damping_stiffness" default="0.01"/>
+  <arg name="mesh_filename" default="cube_hard"/>
+  <arg name="collision_distance" default="0.01"/>
+  <arg name="add_gravity" default="true"/>
+  <arg name="gravity_vector" default="[0, 0, -9.805665]"/>
+  <!-- Mass for the cube hard (in Kg). -->
+  <arg name="mass" default="0.00972"/>
+
+  <arg name="reference_frame" default="test_rig"/>
+  <arg name="object_frame" default="object"/>
+  <arg name="constrained_nodes" default="[
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 88, 89, 90, 115, 116, 117, 127, 128,
+  129, 130, 131, 132, 133, 134, 135, 175, 176, 177, 178, 179, 180, 181, 182, 183, 241, 242, 243,
+  244, 245, 246, 247, 248, 249, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301,
+  302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320,
+  321, 322, 323, 324, 325, 326, 327]"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Nodal force calculator input(s). -->
+  <remap from="/udom_deformation_sensing_full/force_transformer/force_out"
+         to="/udom_deformation_sensing_full/nodal_force_calculator/force_in"/>
+  <remap from="/udom_deformation_sensing_full/nodal_force_calculator/mesh"
+         to="/udom_deformation_sensing_full/mesh_fast"/>
+
+  <!-- Topic throttle input(s). -->
+  <remap from="/udom_deformation_sensing_full/topic_throttle/mesh_in"
+         to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Deformation model input(s). -->
+  <remap from="/udom_deformation_sensing_full/nodal_force_calculator/force_out"
+         to="/udom_deformation_sensing_full/deformation_model/force_info"/>
+
+  <!-- Deformation model output(s). -->
+  <remap from="/udom_deformation_sensing_full/deformation_model/mesh"
+         to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Topic throttle output(s). -->
+  <remap from="/udom_deformation_sensing_full/topic_throttle/mesh_out"
+         to="/udom_deformation_sensing_full/mesh_fast"/>
+
+  <!-- Mesh visualizer input(s). -->
+  <remap from="/mesh_visualizer/mesh" to="/udom_deformation_sensing_full/mesh"/>
+
+  <!-- Points visualizer input(s). -->
+  <remap from="/points_visualizer/points_in"
+         to="/udom_deformation_sensing_full/deformation_model/constrained_nodes_visualization"/>
+
+  <!-- Mesh visualizer output(s). -->
+  <remap from="/mesh_visualizer/points" to="/udom_deformation_sensing_full/points"/>
+
+  <!-- Points visualizer output(s). -->
+  <remap from="/points_visualizer/points_out"
+         to="/udom_deformation_sensing_full/constrained_points"/>
+
+  <!-- Deformation sensing pipeline. -->
+  <group ns="udom_deformation_sensing_full">
+    <!-- Nodal force calculator. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/nodal_force_calculator_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="collision_distance" default="$(arg collision_distance)"/>
+      <arg name="add_gravity" default="$(arg add_gravity)"/>
+      <arg name="gravity_vector" default="$(arg gravity_vector)"/>
+      <arg name="mass" default="$(arg mass)"/>
+      <arg name="object_frame" default="$(arg object_frame)"/>
+      <arg name="reference_frame" default="$(arg reference_frame)"/>
+      <arg name="wait_for_transform" default="$(arg wait_for_transform)"/>
+    </include>
+
+    <!-- Topic throttle. -->
+    <include
+      file="$(find udom_topic_tools)/launch/topic_throttle_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Deformation model. -->
+    <include
+      file="$(find udom_deformation_modeling)/launch/deformation_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="damping_mass" default="$(arg damping_mass)"/>
+      <arg name="damping_stiffness" default="$(arg damping_stiffness)"/>
+      <arg name="mesh_filename" default="$(arg mesh_filename).veg"/>
+      <arg name="constrained_nodes" default="$(arg constrained_nodes)"/>
+    </include>
+  </group>
+</launch>

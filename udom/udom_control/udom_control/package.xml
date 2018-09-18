@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>udom_control</name>
+  <version>0.0.1</version>
+  <description>
+    Packages used to control the deformation of objects.
+  </description>
+  <license>GPLv3</license>
+
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

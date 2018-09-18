@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="$(find udom_geometric_transformation)/launch/transform_to_pose_converter_example.launch">
+    <arg name="loop_rate" default="10"/>
+    <arg name="reference_frame" default="map"/>
+    <arg name="target_frame" default="link_1"/>
+  </include>
+
+  <test pkg="udom_geometric_transformation" type="transform_to_pose_converter_node_test.py"
+        test-name="test_transform_to_pose_converter">
+
+    <remap from="~component_output" to="/transform_to_pose_converter/pose"/>
+    <remap from="~event_out" to="/transform_to_pose_converter/event_in"/>
+  </test>
+</launch>

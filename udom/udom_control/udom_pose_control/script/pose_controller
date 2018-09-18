@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import udom_pose_control.pose_controller_node
+
+
+if __name__ == '__main__':
+    udom_pose_control.pose_controller_node.main()

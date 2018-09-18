@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/jsanch/Documents/phd/thesis/data/force_sensor_model_with_shadow/learned_models/linear_accel_orientation_twist.tfl"
+all_model_checkpoint_paths: "/home/jsanch/Documents/phd/thesis/data/force_sensor_model_with_shadow/learned_models/linear_accel_orientation_twist.tfl"

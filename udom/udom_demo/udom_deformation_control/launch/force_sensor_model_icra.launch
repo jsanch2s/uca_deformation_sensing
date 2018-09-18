@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="500"/>
+  <arg name="sequence_length" default="20"/>
+  <arg name="filter_samples" default="300"/>
+  <arg name="filter_samples_non_contact" default="300"/>
+  <arg name="filter_alpha" default="0.05"/>
+  <arg name="estimated_force_delay_samples" default="1"/>
+  <arg name="measured_force_delay_samples" default="80"/>
+  <arg name="model_name" default="linear_accel_orientation_twist"/>
+  <arg name="node_name" default="force_sensor_model"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="force_sensor_model"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+      <!-- Number of samples representing the sequence length that was used to learn the model.-->
+      <param name="sequence_length" type="int" value="$(arg sequence_length)"/>
+
+      <!-- Number of samples to delay the actual wrench such that it matches the delayed model's estimation. -->
+      <param name="delay_predicted" type="double" value="$(arg estimated_force_delay_samples)"/>
+
+      <!-- Number of samples to delay the estimated wrench such that it matches the actual wrench. -->
+      <param name="delay_actual" type="double" value="$(arg measured_force_delay_samples)"/>
+
+      <!-- Number of samples to filter the estimated non-contact wrench.-->
+      <param name="filter_samples" type="double" value="$(arg filter_samples_non_contact)"/>
+
+      <!-- Filter coefficient for the estimated signal. -->
+      <param name="filter_alpha" type="double" value="$(arg filter_alpha)"/>
+
+      <!-- Name of the model for the trained RNN. -->
+      <param name="model_name" type="str" value="$(arg model_name)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~robot_data" to="/robot_data"/>
+    </node>
+
+    <node pkg="udom_sensor_model" type="wrench_filter"
+          name="wrench_filter" output="screen" machine="$(arg machine)">
+
+      <!-- Name of the filter to apply. -->
+      <param name="filter_type" type="str" value="ma"/>
+
+      <!--Number of samples to use by finite impulse response filters (e.g. MA). -->
+      <param name="samples" type="int" value="$(arg filter_samples)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~wrench_in" to="/sensor_readings"/>
+      <remap from="~wrench_out" to="/force_sensor_model/wrench_in"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="force_sensor_model"
+          name="$(arg node_name)" output="screen">
+      <!-- Number of samples representing the sequence length that was used to learn the model.-->
+      <param name="sequence_length" type="int" value="$(arg sequence_length)"/>
+
+      <!-- Number of samples to delay the actual wrench such that it matches the delayed model's estimation. -->
+      <param name="delay_predicted" type="double" value="$(arg estimated_force_delay_samples)"/>
+
+      <!-- Number of samples to delay the estimated wrench such that it matches the actual wrench. -->
+      <param name="delay_actual" type="double" value="$(arg measured_force_delay_samples)"/>
+
+      <!-- Number of samples to filter the estimated non-contact wrench.-->
+      <param name="filter_samples" type="double" value="$(arg filter_samples_non_contact)"/>
+
+      <!-- Filter coefficient for the estimated signal. -->
+      <param name="filter_alpha" type="double" value="$(arg filter_alpha)"/>
+
+      <!-- Name of the model for the trained RNN. -->
+      <param name="model_name" type="str" value="$(arg model_name)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~robot_data" to="/robot_data"/>
+    </node>
+
+    <node pkg="udom_sensor_model" type="wrench_filter"
+          name="wrench_filter" output="screen">
+
+      <!-- Name of the filter to apply. -->
+      <param name="filter_type" type="str" value="ma"/>
+
+      <!--Number of samples to use by finite impulse response filters (e.g. MA). -->
+      <param name="samples" type="int" value="$(arg filter_samples)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <remap from="~wrench_in" to="/sensor_readings"/>
+      <remap from="~wrench_out" to="/force_sensor_model/wrench_in"/>
+    </node>
+  </group>
+</launch>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find udom_sensor_model)/launch/wrench_filter_example.launch"/>
+
+  <test pkg="udom_sensor_model" type="wrench_filter_node_test.py"
+        test-name="test_wrench_filter">
+
+    <remap from="~wrench_out" to="/wrench_filter/wrench_out"/>
+    <remap from="~event_out" to="/wrench_filter/event_in"/>
+    <remap from="~wrench_in" to="/wrench_filter/wrench_in"/>
+  </test>
+</launch>

@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="loop_rate" default="100"/>
+  <arg name="first_finger_frame" default="rh_ff_sensor"/>
+  <arg name="middle_finger_frame" default="rh_mf_sensor"/>
+  <arg name="ring_finger_frame" default="rh_rf_sensor"/>
+  <arg name="little_finger_frame" default="rh_lf_sensor"/>
+  <arg name="thumb_frame" default="rh_th_sensor"/>
+  <arg name="force_threshold_max" default="0.8" />
+  <arg name="force_threshold_min" default="0.3" />
+  <arg name="increment" default="0.05" />
+  <arg name="increment_thumb" default="0.03" />
+  <arg name="force_feedback" default="true"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Tactile demux input(s). -->
+  <remap from="/udom_reactive_grasping/first_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_reactive_grasping/middle_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_reactive_grasping/ring_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_reactive_grasping/little_finger_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+  <remap from="/udom_reactive_grasping/thumb_sensor/tactile_data_in"
+         to="/rh/tactile"/>
+
+  <!-- Sensor model input(s). -->
+  <remap from="/udom_reactive_grasping/first_finger_sensor_model/tactile_data"
+         to="/udom_reactive_grasping/first_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_reactive_grasping/middle_finger_sensor_model/tactile_data"
+         to="/udom_reactive_grasping/middle_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_reactive_grasping/ring_finger_sensor_model/tactile_data"
+         to="/udom_reactive_grasping/ring_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_reactive_grasping/little_finger_sensor_model/tactile_data"
+         to="/udom_reactive_grasping/little_finger_sensor/tactile_data_out"/>
+  <remap from="/udom_reactive_grasping/thumb_sensor_model/tactile_data"
+         to="/udom_reactive_grasping/thumb_sensor/tactile_data_out"/>
+
+  <!-- Reactive grasp input(s). -->
+  <remap from="/udom_reactive_grasping/reactive_grasp_node/tactile_data_ff"
+         to="/udom_reactive_grasping/first_finger_sensor_model/contact_info"/>
+  <remap from="/udom_reactive_grasping/reactive_grasp_node/tactile_data_mf"
+         to="/udom_reactive_grasping/middle_finger_sensor_model/contact_info"/>
+  <remap from="/udom_reactive_grasping/reactive_grasp_node/tactile_data_rf"
+         to="/udom_reactive_grasping/ring_finger_sensor_model/contact_info"/>
+  <remap from="/udom_reactive_grasping/reactive_grasp_node/tactile_data_lf"
+         to="/udom_reactive_grasping/little_finger_sensor_model/contact_info"/>
+  <remap from="/udom_reactive_grasping/reactive_grasp_node/tactile_data_th"
+         to="/udom_reactive_grasping/thumb_sensor_model/contact_info"/>
+
+  <!-- Joint states from the robot. -->
+  <remap from="/udom_reactive_grasping/reactive_grasp_node/joint_states"
+         to="/joint_states"/>
+
+  <!-- GUI to send events to the reactive grasp demo. -->
+  <remap from="/reactive_grasp_gui_node/event_out" to="/udom_reactive_grasping/event_in"/>
+
+  <!-- Reactive grasp pipeline. -->
+  <group ns="udom_reactive_grasping">
+    <!-- Tactile demux 1 (first finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg first_finger_frame)"/>
+      <arg name="node_name" default="first_finger_sensor"/>
+      <arg name="sensor_index" default="0"/>
+    </include>
+
+    <!-- Tactile demux 2 (middle finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg middle_finger_frame)"/>
+      <arg name="node_name" default="middle_finger_sensor"/>
+      <arg name="sensor_index" default="1"/>
+    </include>
+
+    <!-- Tactile demux 3 (ring finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg ring_finger_frame)"/>
+      <arg name="node_name" default="ring_finger_sensor"/>
+      <arg name="sensor_index" default="2"/>
+    </include>
+
+    <!-- Tactile demux 4 (little finger). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg little_finger_frame)"/>
+      <arg name="node_name" default="little_finger_sensor"/>
+      <arg name="sensor_index" default="3"/>
+    </include>
+
+    <!-- Tactile demux 5 (thumb). -->
+    <include
+      file="$(find udom_topic_tools)/launch/tactile_demux_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="sensor_frame" default="$(arg thumb_frame)"/>
+      <arg name="node_name" default="thumb_sensor"/>
+      <arg name="sensor_index" default="4"/>
+    </include>
+
+    <!-- Sensor model 1 (first finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="first_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Sensor model 2 (middle finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="middle_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Sensor model 3 (ring finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="ring_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Sensor model 4 (little finger). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="little_finger_sensor_model"/>
+      <arg name="sensor_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Sensor model 5 (thumb). -->
+    <include
+      file="$(find udom_sensor_model)/launch/tactile_sensor_model_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="node_name" default="thumb_sensor_model"/>
+      <arg name="sensor_model" default="BioTacSimple"/>
+    </include>
+
+    <!-- Reactive grasp controller. -->
+    <include file="$(find udom_grasp_control)/launch/reactive_grasp_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="force_threshold_max" default="$(arg force_threshold_max)"/>
+      <arg name="force_threshold_min" default="$(arg force_threshold_min)"/>
+      <arg name="increment" default="$(arg increment)"/>
+      <arg name="increment_thumb" default="$(arg increment_thumb)"/>
+      <arg name="force_feedback" default="$(arg force_feedback)"/>
+    </include>
+
+    <!-- Coordinator. -->
+    <node pkg="udom_grasping" type="coordinator_node" name="coordinator" output="screen">
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Remap topics to interface with the coordinator. -->
+      <remap from="~event_in" to="/udom_reactive_grasping/event_in"/>
+      <remap from="~event_out" to="/udom_reactive_grasping/event_out"/>
+
+      <!-- Remap topics to trigger components. -->
+      <remap from="~start_first_finger_sensor"
+             to="/udom_reactive_grasping/first_finger_sensor/event_in"/>
+      <remap from="~start_middle_finger_sensor"
+             to="/udom_reactive_grasping/middle_finger_sensor/event_in"/>
+      <remap from="~start_ring_finger_sensor"
+             to="/udom_reactive_grasping/ring_finger_sensor/event_in"/>
+      <remap from="~start_little_finger_sensor"
+             to="/udom_reactive_grasping/little_finger_sensor/event_in"/>
+      <remap from="~start_thumb_sensor"
+             to="/udom_reactive_grasping/thumb_sensor/event_in"/>
+
+      <remap from="~start_first_finger_sensor_model"
+             to="/udom_reactive_grasping/first_finger_sensor_model/event_in"/>
+      <remap from="~start_middle_finger_sensor_model"
+             to="/udom_reactive_grasping/middle_finger_sensor_model/event_in"/>
+      <remap from="~start_ring_finger_sensor_model"
+             to="/udom_reactive_grasping/ring_finger_sensor_model/event_in"/>
+      <remap from="~start_little_finger_sensor_model"
+             to="/udom_reactive_grasping/little_finger_sensor_model/event_in"/>
+      <remap from="~start_thumb_sensor_model"
+             to="/udom_reactive_grasping/thumb_sensor_model/event_in"/>
+
+      <remap from="~start_reactive_grasp"
+             to="/udom_reactive_grasping/reactive_grasp_node/event_in"/>
+
+      <!-- Remap topics to get feedback from components. -->
+      <remap from="~first_finger_sensor_status"
+             to="/udom_reactive_grasping/first_finger_sensor/event_out"/>
+      <remap from="~middle_finger_sensor_status"
+             to="/udom_reactive_grasping/middle_finger_sensor/event_out"/>
+      <remap from="~ring_finger_sensor_status"
+             to="/udom_reactive_grasping/ring_finger_sensor/event_out"/>
+      <remap from="~little_finger_sensor_status"
+             to="/udom_reactive_grasping/little_finger_sensor/event_out"/>
+      <remap from="~thumb_sensor_status"
+             to="/udom_reactive_grasping/thumb_sensor/event_out"/>
+
+      <remap from="~first_finger_sensor_model_status"
+             to="/udom_reactive_grasping/first_finger_sensor_model/event_out"/>
+      <remap from="~middle_finger_sensor_model_status"
+             to="/udom_reactive_grasping/middle_finger_sensor_model/event_out"/>
+      <remap from="~ring_finger_sensor_model_status"
+             to="/udom_reactive_grasping/ring_finger_sensor_model/event_out"/>
+      <remap from="~little_finger_sensor_model_status"
+             to="/udom_reactive_grasping/little_finger_sensor_model/event_out"/>
+      <remap from="~thumb_sensor_model_status"
+             to="/udom_reactive_grasping/thumb_sensor_model/event_out"/>
+
+      <remap from="~reactive_grasp_status"
+             to="/udom_reactive_grasping/reactive_grasp_node/event_out"/>
+    </node>
+  </group>
+
+  <!-- GUI to start/stop the demo. -->
+  <include
+    file="$(find udom_grasping)/launch/reactive_grasp_gui.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+  </include>
+
+  <!-- Visualization nodes. -->
+  <include
+    file="$(find udom_visualization)/launch/wrenches_visualizer_example.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="input_namespace" default="udom_reactive_grasping"/>
+    <arg name="output_namespace" default="udom_reactive_grasping"/>
+  </include>
+</launch>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>udom_force_estimation</name>
+  <version>0.1.0</version>
+  <description>
+    This package contains nodes to demonstrate force estimation based on the output of
+    a BioTac sensor.
+  </description>
+  <license>GPLv3</license>
+
+  <maintainer email="jose.sanchez.loza@gmail.com">Jose Sanchez</maintainer>
+  <author email="jose.sanchez.loza@gmail.com">Jose Sanchez</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>roslint</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>udom_sensor_model</run_depend>
+  <run_depend>udom_visualization</run_depend>
+  <run_depend>udom_topic_tools</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sr_robot_msgs</run_depend>
+  <run_depend>udom_perception_msgs</run_depend>
+
+  <test_depend>roslaunch</test_depend>
+  <test_depend>rostest</test_depend>
+</package>

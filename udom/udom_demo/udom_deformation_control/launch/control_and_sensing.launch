@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <!-- Global parameters. -->
+  <arg name="deformation_control" default="false"/>
+  <arg name="extracted_pose_rotation" default="[]"/>
+  <arg name="extracted_pose_rotation_axes" default="xyz"/>
+  <arg name="loop_rate" default="500"/>
+  <arg name="mesh_alpha" default="1.0"/>
+  <arg name="sequence_length" default="20"/>
+  <arg name="wrench_filter_samples" default="1"/>
+  <arg name="filter_samples_wrench_estimate" default="50"/>
+  <arg name="contact_nodes" default="[]"/>
+  <arg name="nodes_pose_estimation" default="[]"/>
+  <arg name="index_zero" default="false"/>
+  <arg name="estimated_force_delay_samples" default="1"/>
+  <arg name="measured_force_delay_samples" default="6"/>
+  <arg name="rnnob_model_name" default="linear_accel_orientation_twist"/>
+  <arg name="node_name" default="force_sensor_model"/>
+  <arg name="object_frame" default="object"/>
+  <arg name="target_pose_frame" default="kuka_lwr_right_base_link"/>
+  <arg name="twist_frame" default="kuka_lwr_right_base_link"/>
+  <arg name="sensor_frame" default="sensor_top_frame"/>DZ
+  <arg name="end_effector_frame" default="kuka_lwr_right_7_link"/>
+  <arg name="camera_frame" default="camera_link"/>
+  <arg name="wait_for_transform" default="0.025"/>
+  <arg name="tf_period" default="1"/>
+
+  <!-- In case the deformation control is running. -->
+  <!-- Pose controller input/output(s). -->
+  <remap if="$(arg deformation_control)" from="/udom_deformation_control/pose_extractor/pose"
+         to="/pose_controller/current_pose"/>
+  <!-- Pose error calculator input/output(s). -->
+  <remap if="$(arg deformation_control)" from="/udom_deformation_control/pose_error_calculator/pose_1"
+         to="/pose_controller/target_pose"/>
+  <remap if="$(arg deformation_control)" from="/udom_deformation_control/pose_error_calculator/pose_2"
+         to="/pose_controller/current_pose"/>
+
+  <!-- In case the deformation control is not running. -->
+    <!-- Pose error calculator input/output(s). -->
+  <remap unless="$(arg deformation_control)" from="/udom_deformation_control/pose_error_calculator/pose_1"
+         to="/pose_controller/current_pose"/>
+  <remap unless="$(arg deformation_control)" from="/udom_deformation_control/pose_error_calculator/pose_2"
+         to="/udom_deformation_control/pose_extractor/pose"/>
+
+  <!-- Remap topics to connect components' inputs/outputs. -->
+  <!-- Sensor model input/output(s). -->
+  <remap from="/udom_deformation_control/force_sensor_model/robot_data" to="/robot_data"/>
+
+  <!-- Wrench filter input/output(s). -->
+  <remap from="/udom_deformation_control/wrench_filter/wrench_in" to="/sensor_readings"/>
+  <remap from="/udom_deformation_control/wrench_filter/wrench_out"
+         to="/udom_deformation_control/force_sensor_model/wrench_in"/>
+
+  <!-- Force transformer input/output(s). -->
+  <remap from="/udom_deformation_control/force_sensor_model/force_array"
+         to="/udom_deformation_control/force_transformer/force_in"/>
+
+  <!-- Pose extractor input/output(s). -->
+  <remap from="/udom_deformation_control/pose_extractor/mesh"
+         to="/udom_deformation_control/mesh_fast"/>
+
+  <!-- Nodal force calculator input/output(s).. -->
+  <remap from="/udom_deformation_control/force_transformer/force_out"
+         to="/udom_deformation_control/nodal_force_calculator/force_in"/>
+
+  <!-- Deformation model input/output(s).. -->
+  <remap from="/udom_deformation_control/nodal_force_calculator/force_out"
+         to="/udom_deformation_control/deformation_model/force_info"/>
+  <remap from="/udom_deformation_control/nodal_force_calculator/mesh"
+         to="/udom_deformation_control/mesh"/>
+  <remap from="/udom_deformation_control/deformation_model/mesh"
+         to="/udom_deformation_control/mesh"/>
+
+  <!-- Points visualizer input/output(s). -->
+  <remap from="/points_visualizer/points_in"
+         to="/udom_deformation_control/deformation_model/constrained_nodes_visualization"/>
+  <remap from="/points_visualizer/points_out" to="/udom_deformation_control/constrained_points"/>
+
+  <!-- Surface mesh visualizer input/output(s). -->
+  <remap from="/udom_deformation_sensing_full/mesh" to="/udom_deformation_control/mesh_fast"/>
+  <remap from="/udom_deformation_sensing_full/mesh_out" to="/udom_deformation_control/mesh_surface"/>
+
+  <!-- Deformation control pipeline. -->
+  <group ns="udom_deformation_control">
+    <!-- Sensor model. -->
+    <include
+      file="$(find udom_sensor_model)/launch/force_sensor_model_example.launch">
+      <arg name="delay_predicted" default="$(arg estimated_force_delay_samples)"/>
+      <arg name="delay_actual" default="$(arg measured_force_delay_samples)"/>
+      <arg name="filter_samples" default="$(arg filter_samples_wrench_estimate)"/>
+      <arg name="model_name" default="$(arg rnnob_model_name)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Wrench filter. -->
+    <include
+      file="$(find udom_sensor_model)/launch/wrench_filter_example.launch">
+      <arg name="filter_type" default="ma"/>
+      <arg name="samples" default="$(arg wrench_filter_samples)"/>
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+    </include>
+
+    <!-- Force transformer. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/force_transformer_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="wait_for_transform" default="$(arg wait_for_transform)"/>
+      <arg name="reference_frame" default="$(arg object_frame)"/>
+    </include>
+
+    <!-- Pose extractor. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/pose_extractor_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="nodes" default="$(arg nodes_pose_estimation)"/>
+      <arg name="zero_based" default="$(arg index_zero)"/>
+      <arg name="rotate_pose" default="$(arg extracted_pose_rotation)"/>
+      <arg name="rotation_axes" default="$(arg extracted_pose_rotation_axes)"/>
+      <arg name="reference_frame" default="$(arg object_frame)"/>
+    </include>
+
+    <!-- Pose error calculator. -->
+    <include
+      file="$(find udom_geometric_transformation)/launch/pose_error_calculator_example.launch">
+      <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="wait_for_transform" default="$(arg wait_for_transform)"/>
+    </include>
+
+    <!-- Coordinator. -->
+    <node pkg="udom_deformation_control" type="coordinator_icra_node" name="coordinator" output="screen">
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- Remap topics to interface with the coordinator. -->
+      <remap from="~event_in" to="/udom_deformation_control/event_in"/>
+      <remap from="~event_out" to="/udom_deformation_control/event_out"/>
+      <remap from="~mesh" to="/udom_deformation_control/mesh"/>
+
+      <!-- Remap topics to trigger components. -->
+      <remap from="~start_sensor_model"
+             to="/udom_deformation_control/force_sensor_model/event_in"/>
+      <remap from="~start_wrench_filter"
+             to="/udom_deformation_control/wrench_filter/event_in"/>
+      <remap from="~start_pose_extractor"
+             to="/udom_deformation_control/pose_extractor/event_in"/>
+      <remap from="~start_pose_controller"
+             to="/udom_deformation_control/pose_controller/event_in"/>
+      <remap from="~start_force_transformer"
+             to="/udom_deformation_control/force_transformer/event_in"/>
+      <remap from="~start_nodal_force_calculator"
+             to="/udom_deformation_control/nodal_force_calculator/event_in"/>
+      <remap from="~start_topic_throttle"
+             to="/udom_deformation_control/topic_throttle/event_in"/>
+      <remap from="~start_deformation_model"
+             to="/udom_deformation_control/deformation_model/event_in"/>
+
+      <!-- Remap topics to get feedback from components. -->
+      <remap from="~sensor_model_status"
+             to="/udom_deformation_control/force_sensor_model/event_out"/>
+      <remap from="~wrench_filter_status"
+             to="/udom_deformation_control/wrench_filter/event_out"/>
+      <remap from="~pose_extractor_status"
+             to="/udom_deformation_control/pose_extractor/event_out"/>
+      <remap from="~pose_controller_status"
+             to="/udom_deformation_control/pose_controller/event_out"/>
+      <remap from="~force_transformer_status"
+             to="/udom_deformation_control/force_transformer/event_out"/>
+      <remap from="~nodal_force_calculator_status"
+             to="/udom_deformation_control/nodal_force_calculator/event_out"/>
+      <remap from="~topic_throttle_status"
+             to="/udom_deformation_control/topic_throttle/event_out"/>
+      <remap from="~deformation_model_status"
+             to="/udom_deformation_control/deformation_model/event_out"/>
+    </node>
+  </group>
+
+  <!-- Accelerometer. -->
+  <node pkg="rosserial_python" type="serial_node.py" name="accelerometer"
+        args="/dev/ttyACM0 _baud:=500000"/>
+
+  <!-- Visualization nodes. -->
+  <!-- To visualize the constrained nodes. -->
+  <include
+    file="$(find udom_visualization)/launch/points_visualizer_example.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="points_frame" default="$(arg object_frame)"/>
+    <arg name="scale" default="[0.005, 0.005, 0.005]"/>
+    <arg name="color" default="[1.0, 0.0, 0.0, 0.9]"/>
+  </include>
+
+  <!-- To visualize the mesh. -->
+  <include
+    file="$(find ucr_experiment_evaluation)/launch/tet_mesh_to_mesh.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="alpha" default="$(arg mesh_alpha)"/>
+    <arg name="surface_nodes" default="[]"/>
+  </include>
+
+  <!-- To convert mesh to point cloud.-->
+  <node pkg="ucr_experiment_evaluation" type="mesh_to_point_cloud"
+        name="mesh_to_point_cloud_node" output="screen">
+    <!-- Node cycle rate (in Hz). -->
+    <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+    <!-- The point cloud will be described with respect to this frame. -->
+    <param name="reference_frame" type="str" value="$(arg object_frame)"/>
+
+    <remap from="~mesh_in" to="/udom_deformation_control/mesh"/>
+    <remap from="~point_cloud_out" to="/udom_deformation_control/surface"/>
+    <remap from="~nodes" to="/nodes_to_extract"/>
+  </node>
+
+  <!-- Set transformations (x y z yaw pitch roll parent child ms). -->
+  <!-- Sensor to the robot end-effector frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="force_sensor_frame_broadcaster"
+        args="0.0 0.0 0.04 0 3.141592 0 $(arg end_effector_frame) $(arg sensor_frame) $(arg tf_period)"/>
+
+  <!-- Sensor to the robot end-effector frame. -->
+  <node pkg="tf" type="static_transform_publisher" name="camera_frame_broadcaster"
+        args="0.635 0.07 1.358 0 3.141592 3.141592 $(arg target_pose_frame)
+        $(arg camera_frame) $(arg tf_period)"/>
+</launch>

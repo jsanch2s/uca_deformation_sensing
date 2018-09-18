@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- Note: example launch file. Do not modify! -->
+<launch>
+  <arg name="loop_rate" default="500"/>
+  <arg name="samples" default="20"/>
+  <arg name="filter_type" default="ma"/>
+  <arg name="node_name" default="wrench_filter"/>
+  <arg name="use_remote_machine" default="false"/>
+  <arg name="machine" default="None"/>
+
+  <group if="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="wrench_filter"
+          name="$(arg node_name)" output="screen" machine="$(arg machine)">
+
+      <!-- Name of the filter to apply. -->
+      <param name="filter_type" type="str" value="$(arg filter_type)"/>
+
+      <!--Number of samples to use by finite impulse response filters (e.g. MA). -->
+      <param name="samples" type="int" value="$(arg samples)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+
+  <group unless="$(arg use_remote_machine)">
+    <node pkg="udom_sensor_model" type="wrench_filter"
+          name="$(arg node_name)" output="screen">
+      <!-- Name of the filter to apply. -->
+      <param name="filter_type" type="str" value="$(arg filter_type)"/>
+
+      <!--Number of samples to use by finite impulse response filters (e.g. MA). -->
+      <param name="samples" type="int" value="$(arg samples)"/>
+
+      <!-- Node cycle rate (in Hz). -->
+      <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+    </node>
+  </group>
+</launch>
