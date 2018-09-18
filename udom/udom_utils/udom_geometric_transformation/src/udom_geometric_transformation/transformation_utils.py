@@ -107,6 +107,70 @@ class GeometryTransformer:
 
         return point_out.point
 
+    def transform_pose(self, pose, target_frame, duration=5.0):
+        """
+        Transform the pose to the target_frame.
+        Throws an exception if the transformation failed.
+
+        :param pose: The pose to be transformed.
+        :type pose: geometry_msgs.msg.PoseStamped
+
+        :param target_frame: The frame into which the pose should be transformed.
+        :type target_frame: str
+
+        :param duration: Maximum duration to wait for the transform (in seconds).
+        :type duration: float
+
+        :return: The transformed Pose.
+        :rtype: geometry_msgs.msg.PoseStamped
+
+        """
+        point_out = self.buffer.transform(
+            pose, target_frame, timeout=rospy.Duration(duration))
+
+        return point_out
+
+    def transform_twist(self, twist_in, target_frame='base_link', wait_for_transform=0.1):
+        """
+        Transforms the provided twist to the target frame.
+        Raises an exception if the transformation failed.
+
+        :param twist_in: The twist which should be transformed.
+        :type twist_in: geometry_msgs.msg.TwistStamped
+
+        :param target_frame: The frame into which the twist should be transformed.
+        :type target_frame: str
+
+        :param wait_for_transform: Amount of seconds to wait for the transform.
+        :type wait_for_transform: float
+
+        :return: The transformed twist.
+        :rtype: geometry_msgs.msg.TwistStamped
+
+        """
+        twist_out = geometry_msgs.msg.TwistStamped()
+        transform = self.buffer.lookup_transform(
+            target_frame, twist_in.header.frame_id, twist_in.header.stamp,
+            timeout=rospy.Duration(wait_for_transform))
+
+        transform_matrix = np.zeros((4, 4), dtype=float)
+        transform_matrix[3, 3] = 1.0
+        transform_matrix[0:3, 3] = [
+            transform.transform.translation.x, transform.transform.translation.y,
+            transform.transform.translation.z]
+        # get matrix from quaternion (transformations.quaternion_matrix
+        transform_matrix[0:3, 0:3] = tf.transformations.quaternion_matrix([
+            transform.transform.rotation.x, transform.transform.rotation.y,
+            transform.transform.rotation.z, transform.transform.rotation.w])[0:3, 0:3]
+
+        transformed_twist = transform_twist(twist_in.twist, transform_matrix)
+
+        twist_out.twist = transformed_twist
+        twist_out.header.frame_id = target_frame
+        twist_out.header.stamp = twist_in.header.stamp
+
+        return twist_out
+
 
 def transform_wrench(wrench_in, transform, point=None):
     """
@@ -174,3 +238,43 @@ def quaternion_rotation(vector, quat):
          (1 - 2*quat.x**2 - 2*quat.y**2)]])
 
     return np.dot(quaternion, np.array(vector))
+
+
+def transform_twist(twist, transform):
+    """"
+    Apply a transform to a twist. It is assumed that the reference point and
+    reference frame are collapsed into a single coordinate frame. (See also
+    http://www.ros.org/wiki/tf/Reviews/2010-03-12_API_Review)
+
+    :param twist: The twist to which the transform should be applied.
+    :type twist: geometry_msgs.msg.Twist
+
+    :param transform: The desired transform that should be applied.
+    :type transform: numpy.matrix[4][4]
+
+    :return: The transformed twist.
+    :rtype: geometry_msgs.msg.Twist
+
+    """
+    twist_out = geometry_msgs.msg.Twist()
+
+    linear_velocity = np.array([
+        twist.linear.x, twist.linear.y, twist.linear.z])
+    angular_velocity = np.array([
+        twist.angular.x, twist.angular.y, twist.angular.z])
+
+    M = transform[0:3, 0:3]
+    p = transform[0:3, 3]
+
+    transformed_angular_velocity = np.dot(M, angular_velocity)
+    transformed_linear_velocity = \
+        np.dot(M, linear_velocity) + np.cross(p, transformed_angular_velocity)
+
+    twist_out.linear.x = transformed_linear_velocity[0]
+    twist_out.linear.y = transformed_linear_velocity[1]
+    twist_out.linear.z = transformed_linear_velocity[2]
+    twist_out.angular.x = transformed_angular_velocity[0]
+    twist_out.angular.y = transformed_angular_velocity[1]
+    twist_out.angular.z = transformed_angular_velocity[2]
+
+    return twist_out

@@ -23,8 +23,7 @@ VegaWrapper::VegaWrapper(
         throw std::runtime_error("Failed to load mesh.");
 
     TetMesh *tet_mesh_;
-    if (volumetric_mesh_->getElementType() == VolumetricMesh::TET)
-    {
+    if (volumetric_mesh_->getElementType() == VolumetricMesh::TET) {
         tet_mesh_ = static_cast<TetMesh*>(volumetric_mesh_.get());
     }
     else
@@ -81,8 +80,7 @@ void VegaWrapper::extract_points(
     {
         int vertex = (ii - index_start) / 3;
         // Test if the index is unique (since each index has three degrees of freedom).
-        if (done_vertices.find(vertex) == done_vertices.end())
-        {
+        if (done_vertices.find(vertex) == done_vertices.end()) {
             done_vertices.insert(vertex);
             geometry_msgs::Point point;
 
@@ -99,8 +97,7 @@ void VegaWrapper::extract_points(
 void VegaWrapper::init_mesh(udom_modeling_msgs::Mesh &mesh)
 {
     std::vector<double> vertices_vec(vertices, vertices + (num_vertices * 3));
-    for (std::size_t ii = 0; ii != num_vertices; ++ii)
-    {
+    for (std::size_t ii = 0; ii != num_vertices; ++ii) {
         int index = ii * 3;
         geometry_msgs::Point point;
 
@@ -112,8 +109,7 @@ void VegaWrapper::init_mesh(udom_modeling_msgs::Mesh &mesh)
     }
 
     std::vector<int> elements_vec(elements, elements + num_elements * elements_per_vertex);
-    for (std::size_t ii = 0; ii != num_elements; ++ii)
-    {
+    for (std::size_t ii = 0; ii != num_elements; ++ii) {
         int index = ii * elements_per_vertex;
         udom_modeling_msgs::MeshTetrahedron tetrahedra;
 
@@ -132,8 +128,7 @@ void VegaWrapper::reset_mesh(udom_modeling_msgs::Mesh &mesh)
     implicit_integrator_->SetState(new double[num_vertices * 3]());
 
     std::vector<double> vertices_vec(vertices, vertices + (num_vertices * 3));
-    for (std::size_t ii = 0; ii != num_vertices; ++ii)
-    {
+    for (std::size_t ii = 0; ii != num_vertices; ++ii) {
         int index = ii * 3;
 
         mesh.vertices.at(ii).x = vertices_vec.at(index);
@@ -145,8 +140,7 @@ void VegaWrapper::reset_mesh(udom_modeling_msgs::Mesh &mesh)
 void VegaWrapper::update_mesh(udom_modeling_msgs::Mesh &mesh, std::vector<double> &displacements)
 {
     std::vector<double> vertices_vec(vertices, vertices + (num_vertices * 3));
-    for (std::size_t ii = 0; ii != displacements.size() / 3; ++ii)
-    {
+    for (std::size_t ii = 0; ii != displacements.size() / 3; ++ii) {
         int index = ii * 3;
 
         mesh.vertices.at(ii).x = vertices_vec.at(index) + displacements.at(index);

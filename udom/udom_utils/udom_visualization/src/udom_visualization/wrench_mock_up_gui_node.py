@@ -31,13 +31,13 @@ MAX_FORCE = 1
 MIN_FORCE = -1
 
 # In meters.
-POSITION_RESOLUTION = 0.002
-MAX_POS_X = 0.6
-MIN_POS_X = 0.3
-MAX_POS_Y = 0.2
-MIN_POS_Y = -0.2
-MAX_POS_Z = 0.5
-MIN_POS_Z = 0.2
+POSITION_RESOLUTION = 0.005
+MAX_POS_X = 2.0
+MIN_POS_X = -2.0
+MAX_POS_Y = 2.0
+MIN_POS_Y = -2.0
+MAX_POS_Z = 2.0
+MIN_POS_Z = -2.0
 
 wrench = geometry_msgs.msg.WrenchStamped()
 pose = geometry_msgs.msg.PoseStamped()

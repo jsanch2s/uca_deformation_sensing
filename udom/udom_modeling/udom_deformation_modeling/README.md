@@ -3,8 +3,8 @@ This package contains nodes to simulate the deformation of an object using the
 Vega FEM library[1]
 
 [1] http://run.usc.edu/vega/.
-___
-___
+
+__
 ## The *deformation_model* node
 This node subscribes to an array of forces message (std_msgs::Float32MultiArray)
 and computes the deformation of a mesh based on the applied forces. It outputs a

@@ -17,8 +17,10 @@
   <build_depend>roslint</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>tf2_ros</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>udom_common_msgs</build_depend>
   <build_depend>udom_modeling_msgs</build_depend>
+  <build_depend>udom_control_msgs</build_depend>
 
   <run_depend>rospy</run_depend>
   <run_depend>tf</run_depend>
@@ -26,8 +28,10 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>tf2_geometry_msgs</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>udom_common_msgs</run_depend>
   <run_depend>udom_modeling_msgs</run_depend>
+  <run_depend>udom_control_msgs</run_depend>
 
   <test_depend>roslaunch</test_depend>
   <test_depend>rostest</test_depend>

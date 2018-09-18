@@ -78,20 +78,16 @@ TEST_F(VegaWrapperTest1Indexed, test_init_elements)
     std::vector<int> element_3{6, 7, 5, 3};
     std::vector<int> element_4{3, 5, 1, 2};
 
-    for (int ii = 0; ii < element_1.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_1.size(); ++ii) {
       EXPECT_EQ(element_1[ii], ros_mesh.tetrahedra[0].vertex_indices[ii]);
     }
-    for (int ii = 0; ii < element_2.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_2.size(); ++ii) {
       EXPECT_EQ(element_2[ii], ros_mesh.tetrahedra[1].vertex_indices[ii]);
     }
-    for (int ii = 0; ii < element_3.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_3.size(); ++ii) {
       EXPECT_EQ(element_3[ii], ros_mesh.tetrahedra[2].vertex_indices[ii]);
     }
-    for (int ii = 0; ii < element_4.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_4.size(); ++ii) {
       EXPECT_EQ(element_4[ii], ros_mesh.tetrahedra[3].vertex_indices[ii]);
     }
 }
@@ -148,8 +144,7 @@ TEST_F(VegaWrapperTest1Indexed, test_get_displacements)
 
 TEST_F(VegaWrapperTest1Indexed, test_displacements_update)
 {
-    std::vector<double> displacements =
-    {
+    std::vector<double> displacements = {
         0.1, 0.2, 0.3, 0.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3
     };
 
@@ -191,8 +186,7 @@ TEST_F(VegaWrapperTest1Indexed, test_displacements_update)
 
 TEST_F(VegaWrapperTest1Indexed, test_reset_mesh)
 {
-    std::vector<double> displacements =
-    {
+    std::vector<double> displacements = {
         0.1, 0.2, 0.3, 0.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3
     };
 

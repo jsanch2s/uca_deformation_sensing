@@ -31,6 +31,8 @@ gravity acts downwards if the Z axis of the reference frame is pointing upwards.
 
 **Parameter(s):**
   * `loop_rate`: Node cycle rate (in Hz).
+  * `contact_nodes`: A list of three indices representing the nodes where the force is being applied.
+        Note: This option assumes that the contact is fixed relatively to the mesh at all times.
   * `collision_distance`: Distance to determine if a collision is occurring between the mesh and the finger.
   * `add_gravity`: If true, it adds the gravity force with respect to the reference frame.
   * `gravity_vector`: The gravity vector, defaults to [0, 0, -9.805665] (in m/s^2).
@@ -49,8 +51,10 @@ import udom_common_msgs.msg
 import udom_modeling_msgs.msg
 import numpy as np
 from itertools import izip as zip
+from dynamic_reconfigure.server import Server
 import udom_geometric_transformation.transformation_utils as utils
 import udom_geometric_transformation.nodal_force_computation as nodal_force_computation
+from udom_geometric_transformation.cfg import CollisionDistanceConfig as CollisionDistance
 
 
 class NodalForceCalculatorNode(object):
@@ -75,9 +79,16 @@ class NodalForceCalculatorNode(object):
         self.gravity_computed = False
         self.g_force = [0.0, 0.0, 0.0]
 
+        # A list of three indices representing the nodes where the force is being applied.
+        # Note: This option assumes that the contact is fixed relatively to the mesh at all times.
+        self.contact_nodes = rospy.get_param('~contact_nodes', [])
+
         # Distance to determine if a collision is occurring between the mesh and the finger.
         self.collision_distance = rospy.get_param('~collision_distance', 0.001)
 
+        # Object frame to compute the gravity vector.
+        self.object_frame = rospy.get_param("~object_frame", None)
+        assert self.object_frame is not None, "Object frame must be specified."
         # Enable gravity.
         self.add_gravity = rospy.get_param('~add_gravity', True)
         if self.add_gravity:
@@ -90,10 +101,7 @@ class NodalForceCalculatorNode(object):
             self.reference_frame = rospy.get_param("~reference_frame", None)
             assert self.reference_frame is not None, "If `add_gravity` is set, then a " \
                                                      "reference frame must be specified."
-            # Object frame to compute the gravity vector.
-            self.object_frame = rospy.get_param("~object_frame", None)
-            assert self.object_frame is not None, "If `add_gravity` is set, then a " \
-                                                  "object frame must be specified."
+
             # Object's mass (in Kg).
             self.mass = rospy.get_param("~mass", None)
             assert self.mass is not None, "If `add_gravity` is set, then a  mass must " \
@@ -116,6 +124,12 @@ class NodalForceCalculatorNode(object):
         self.event_out = rospy.Publisher("~event_out", std_msgs.msg.String, queue_size=10)
         self.force_out = rospy.Publisher(
             "~force_out", std_msgs.msg.Float32MultiArray, queue_size=1, tcp_nodelay=True)
+        self.contact_point_1 = rospy.Publisher(
+            "~contact_point_1", geometry_msgs.msg.PointStamped, queue_size=1, tcp_nodelay=True)
+        self.contact_point_2 = rospy.Publisher(
+            "~contact_point_2", geometry_msgs.msg.PointStamped, queue_size=1, tcp_nodelay=True)
+        self.contact_point_3 = rospy.Publisher(
+            "~contact_point_3", geometry_msgs.msg.PointStamped, queue_size=1, tcp_nodelay=True)
 
         # Subscribers
         rospy.Subscriber("~event_in", std_msgs.msg.String, self.event_in_cb)
@@ -217,7 +231,7 @@ class NodalForceCalculatorNode(object):
             self.reset_component_data()
             return 'INIT'
         else:
-            force_out = self.compute_nodal_forces(self.force_info)
+            force_out = self.compute_nodal_forces(self.force_info, self.contact_nodes)
             if force_out:
                 self.event_out.publish('e_running')
                 self.force_out.publish(force_out)
@@ -226,7 +240,7 @@ class NodalForceCalculatorNode(object):
             self.reset_component_data()
             return 'IDLE'
 
-    def compute_nodal_forces(self, force_in):
+    def compute_nodal_forces(self, force_in, fixed_nodes=[]):
         """
         Computes the nodal forces of the specified mesh. It distributes the force
         among the three nodes of the mesh element where the force is applied.
@@ -236,6 +250,11 @@ class NodalForceCalculatorNode(object):
         :param force_in: The force information.
         :type force_in: udom_common_msgs.msg.ForceArray
 
+        :param fixed_nodes: A list of three indices representing the nodes where the
+            force is being applied. Note: This option assumes that the contact is fixed
+            relatively to the mesh at all times.
+        :type fixed_nodes: list
+
         :return: The nodal force information.
         :rtype: std_msgs.msg.Float32MultiArray
 
@@ -244,15 +263,33 @@ class NodalForceCalculatorNode(object):
         force_out.data = np.zeros(3 * len(self.mesh.vertices)).tolist()
 
         for wrench, point in zip(force_in.wrenches, force_in.positions):
-            points, idx, in_collision = nodal_force_computation.neighbors(
-                point, self.mesh, n=3, distance=self.collision_distance)
+            if fixed_nodes:
+                points = np.take(self.mesh.vertices, fixed_nodes)
+                idx = fixed_nodes
+                in_collision = True
+            else:
+                points, idx, in_collision = nodal_force_computation.neighbors(
+                    point, self.mesh, n=3, distance=self.collision_distance)
             if not in_collision:
-                for index, node in enumerate(idx):
-                    nn = node * 3
-                    force_out.data[nn] += self.g_force[0]
-                    force_out.data[nn+1] += self.g_force[1]
-                    force_out.data[nn+2] += self.g_force[2]
-                return force_out
+                continue
+
+            contact_point_1 = geometry_msgs.msg.PointStamped()
+            contact_point_2 = geometry_msgs.msg.PointStamped()
+            contact_point_3 = geometry_msgs.msg.PointStamped()
+            contact_point_1.header.frame_id = self.object_frame
+            contact_point_2.header.frame_id = self.object_frame
+            contact_point_3.header.frame_id = self.object_frame
+
+            contact_point_1.point = points[0]
+            contact_point_2.point = points[1]
+            contact_point_3.point = points[2]
+            contact_point_1.header.stamp = rospy.Time.now()
+            contact_point_2.header.stamp = rospy.Time.now()
+            contact_point_3.header.stamp = rospy.Time.now()
+
+            self.contact_point_1.publish(contact_point_1)
+            self.contact_point_2.publish(contact_point_2)
+            self.contact_point_3.publish(contact_point_3)
 
             triangle = geometry_msgs.msg.Polygon()
             triangle.points = points
@@ -264,10 +301,15 @@ class NodalForceCalculatorNode(object):
             for index, node in enumerate(idx):
                 nn = node * 3
                 ii = index * 3
-                force_out.data[nn] += nodal_forces[ii] + self.g_force[0]
-                force_out.data[nn+1] += nodal_forces[ii+1] + self.g_force[1]
-                force_out.data[nn+2] += nodal_forces[ii+2] + self.g_force[2]
+                force_out.data[nn] += nodal_forces[ii]
+                force_out.data[nn+1] += nodal_forces[ii+1]
+                force_out.data[nn+2] += nodal_forces[ii+2]
 
+        for node in idx:
+            nn = node * 3
+            force_out.data[nn] += self.g_force[0]
+            force_out.data[nn+1] += self.g_force[0]
+            force_out.data[nn+2] += self.g_force[0]
         return force_out
 
     def compute_gravity(self):

@@ -54,9 +54,6 @@ class TestForceTransformer(unittest.TestCase):
         Note: this is not a functionality test.
 
         """
-        transform_1 = geometry_msgs.msg.TransformStamped()
-        transform_2 = geometry_msgs.msg.TransformStamped()
-
         frame_1 = 'f1'
         frame_2 = 'f2'
         # Note: this should match the one specified in the .test file.
@@ -93,34 +90,36 @@ class TestForceTransformer(unittest.TestCase):
         desired_wrenches = [wrench_1, wrench_2]
 
         # Set transforms.
-        transform_1.header.frame_id = reference_frame
-        transform_1.child_frame_id = frame_1
-        transform_1.transform.translation.x = 1.0
-        transform_1.transform.translation.y = 0.0
-        transform_1.transform.translation.z = 0.0
-        transform_1.transform.rotation.x = 0.0
-        transform_1.transform.rotation.y = 0.0
-        transform_1.transform.rotation.z = 0.0
-        transform_1.transform.rotation.w = 1.0
+        t_1 = geometry_msgs.msg.TransformStamped()
+        t_1.header.frame_id = reference_frame
+        t_1.child_frame_id = frame_1
+        t_1.transform.translation.x = 1.0
+        t_1.transform.translation.y = 0.0
+        t_1.transform.translation.z = 0.0
+        t_1.transform.rotation.x = 0.0
+        t_1.transform.rotation.y = 0.0
+        t_1.transform.rotation.z = 0.0
+        t_1.transform.rotation.w = 1.0
 
-        transform_2.header.frame_id = reference_frame
-        transform_2.child_frame_id = frame_2
-        transform_2.transform.translation.x = 2.0
-        transform_2.transform.translation.y = 0.0
-        transform_2.transform.translation.z = 0.0
-        transform_2.transform.rotation.x = 0.0
-        transform_2.transform.rotation.y = 0.0
-        transform_2.transform.rotation.z = 0.0
-        transform_2.transform.rotation.w = 1.0
+        t_2 = geometry_msgs.msg.TransformStamped()
+        t_2.header.frame_id = reference_frame
+        t_2.child_frame_id = frame_2
+        t_2.transform.translation.x = 2.0
+        t_2.transform.translation.y = 0.0
+        t_2.transform.translation.z = 0.0
+        t_2.transform.rotation.x = 0.0
+        t_2.transform.rotation.y = 0.0
+        t_2.transform.rotation.z = 0.0
+        t_2.transform.rotation.w = 1.0
 
         broadcaster_1 = tf2_ros.TransformBroadcaster()
         broadcaster_2 = tf2_ros.TransformBroadcaster()
 
         while not self.wait_for_result:
-            transform_1.header.stamp = rospy.Time.now()
-            transform_2.header.stamp = rospy.Time.now()
-            broadcaster_1.sendTransform(transform_1)
-            broadcaster_2.sendTransform(transform_2)
+            t_1.header.stamp = rospy.Time.now()
+            t_2.header.stamp = rospy.Time.now()
+            broadcaster_1.sendTransform(t_1)
+            broadcaster_2.sendTransform(t_2)
             self.force_in.publish(force_in)
             self.event_out.publish('e_start')
 

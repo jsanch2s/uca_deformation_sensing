@@ -48,7 +48,7 @@ class TestDeformationSensingDemo(unittest.TestCase):
         self.event_out.unregister()
         self.tactile_data.unregister()
 
-    def test_nodal_force_calculator_node(self):
+    def test_deformation_sensing_pipeline(self):
         """
         Verifies the node's interface is correct.
         Note: this is not a functionality test.

@@ -54,8 +54,7 @@ class TestDeformationModel(unittest.TestCase):
         """
         force_info = std_msgs.msg.Float32MultiArray()
         force_info.data = [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ]
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         while not self.wait_for_result:
             self.force_info.publish(force_info)

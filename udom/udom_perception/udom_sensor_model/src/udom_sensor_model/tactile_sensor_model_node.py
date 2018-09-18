@@ -5,36 +5,53 @@ This node instantiates a tactile sensor model in order to map the readings of th
 sensor to contact information.
 
 **Input(s):**
+
   * `tactile_data`: The tactile sensor's output.
     - *type:* `udom_perception_msgs/BiotacStamped`
+
   * `event_in`: The desired event for the node:
+
       `e_start`: starts the component.
+
       `e_stop`: stops the component.
+
     - *type:* `std_msgs/String`
 
 **Output(s):**
+
   * `contact_info`: A representation of the tactile data that specifies the contact
       locations and magnitudes.
     - *type:* `udom_perception_msgs/ContactInfo`
+
   * `event_out`: The current event of the node.
+
       `e_running`: when the component is running.
+
       `e_stopped`: when the component is stopped.
+
     - *type:* `std_msgs/String`
 
 **Parameter(s):**
+
   * `loop_rate`: Node cycle rate (in Hz).
+
   * `max_intensity_value`: Maximum value that an electrode might reach.
+
   * `intensity_threshold`: Threshold used to decide whether or not an electrode is active.
       Since the electrode value decreases the more its surface is pressed, a negative value
       thus, means higher intensity. The values above this threshold are then removed.
+
   * `gaussian`: If True, it uses a Gaussian distribution to find the electrodes' centers.
       Otherwise, it assumes the center as specified in the electrodes config file.
+
   * `inverted`: If False, it assumes that the intensity value of each electrode is
       proportional to the Gaussian distribution's width. Otherwise, the width is inversely
       proportional to the intensity.
+
   * `calibration_samples`: Number of samples to calculate the resting impedance values,
       these values are then used to subtract them from the current impedance values
       to obtain the impedance changes.
+
   * `sequence_length`: Number of samples representing the sequence length that was
       used to learn the model.
 
@@ -341,9 +358,19 @@ class TactileSensorModel(object):
         contact_info = udom_perception_msgs.msg.ContactInfo()
         y = self.model.predict(tactile_values)
         wrench = geometry_msgs.msg.Wrench()
-        wrench.force.x = y[0][0]
-        wrench.force.y = y[0][1]
-        wrench.force.z = y[0][2]
+        # We assume the tactile sensor can't pull an object (thus no positive forces).
+        if y[0][0] > 0:
+            wrench.force.x = 0.0
+        else:
+            wrench.force.x = y[0][0]
+        if y[0][1] > 0:
+            wrench.force.y = 0.0
+        else:
+            wrench.force.y = y[0][1]
+        if y[0][2] > 0:
+            wrench.force.z = 0.0
+        else:
+            wrench.force.z = y[0][2]
         # ToDo: Add torque info
 
         point = geometry_msgs.msg.Point()

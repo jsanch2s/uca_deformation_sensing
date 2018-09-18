@@ -6,7 +6,6 @@
     <arg name="mesh_filename" default="test_mesh_1_indexed.veg"/>
     <arg name="constrained_nodes" default="[]"/>
     <arg name="index_start" default="1"/>
-    <arg name="use_remote_machine" default="false"/>
   </include>
 
   <test pkg="udom_deformation_modeling" type="deformation_model_node_test.py"

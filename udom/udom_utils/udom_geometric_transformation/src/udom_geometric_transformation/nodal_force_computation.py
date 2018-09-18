@@ -60,8 +60,8 @@ def neighbors(point, mesh, n=3, distance=None):
     if distance is not None:
         if abs(distance) < min(distances[0]):
             in_collision = False
-
     indices = indices[0]
+
     return np.take(mesh.vertices, indices), indices, in_collision
 
 

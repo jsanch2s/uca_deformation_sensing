@@ -115,7 +115,7 @@ class DeformationModel
         /**
          * Constrained vertices of the mesh. Each constrained node must specify
          * its three degrees of freedom. E.g., to constrain vertices 4, 10 and 14:
-         * constrained_nodes_ = {12, 13, 14, 30, 31, 32, 42, 43, 44};
+         * constrained_nodes_ = {10, 11, 12, 28, 29, 30, 40, 41, 42};
          */
         std::vector<int> constrained_nodes_;
 

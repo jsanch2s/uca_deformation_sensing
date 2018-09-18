@@ -2,6 +2,7 @@
 <!-- Note: example launch file. Do not modify! -->
 <launch>
   <arg name="loop_rate" default="10"/>
+  <arg name="contact_nodes" default="[]"/>
   <arg name="collision_distance" default="0.001"/>
   <arg name="add_gravity" default="true"/>
   <arg name="gravity_vector" default="[0, 0, -9.805665]"/>
@@ -17,6 +18,10 @@
           name="nodal_force_calculator" output="screen" machine="$(arg machine)">
       <!-- Node cycle rate (in Hz). -->
       <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- A list of three indices representing the nodes where the force is being applied.
+        Note: This option assumes that the contact is fixed relatively to the mesh at all times. -->
+      <rosparam param="contact_nodes" subst_value="True"> $(arg contact_nodes) </rosparam>
 
       <!-- Distance to determine if a collision is occurring between the mesh and the finger. -->
       <param name="collision_distance" type="double" value="$(arg collision_distance)"/>
@@ -46,6 +51,10 @@
           name="nodal_force_calculator" output="screen">
       <!-- Node cycle rate (in Hz). -->
       <param name="loop_rate" type="double" value="$(arg loop_rate)"/>
+
+      <!-- A list of three indices representing the nodes where the force is being applied.
+        Note: This option assumes that the contact is fixed relatively to the mesh at all times. -->
+      <rosparam param="contact_nodes" subst_value="True"> $(arg contact_nodes) </rosparam>
 
       <!-- Distance to determine if a collision is occurring between the mesh and the finger. -->
       <param name="collision_distance" type="double" value="$(arg collision_distance)"/>

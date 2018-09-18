@@ -32,7 +32,7 @@ DeformationModel::DeformationModel(const ros::NodeHandle &nh) :
     mesh_dofs = vega_interface_->mesh_dofs();
     vega_interface_->extract_points(constrained_nodes_, constrained_points, index_start_);
 
-    pub_mesh_ = nh_.advertise<udom_modeling_msgs::Mesh>("mesh", 1);
+    pub_mesh_ = nh_.advertise<udom_modeling_msgs::Mesh>("mesh", 1, true);
     pub_constrained_nodes_ = nh_.advertise<visualization_msgs::Marker>(
         "constrained_nodes_visualization", 10);
     pub_event_out_ = nh_.advertise<std_msgs::String>("event_out", 10);
@@ -88,8 +88,7 @@ void DeformationModel::start()
 
 void DeformationModel::initState()
 {
-    if (event_ == "e_start")
-    {
+    if (event_ == "e_start") {
         pub_mesh_.publish(mesh);
         pub_constrained_nodes_.publish(constrained_points);
         state_ = IDLE;
@@ -128,7 +127,7 @@ void DeformationModel::idleState()
     else if (force_info_received_)
     {
         state_ = RUNNING;
-        force_info_received_ = false;
+//        force_info_received_ = false;
     }
     else
     {
@@ -158,8 +157,8 @@ void DeformationModel::runningState()
     {
         computeDeformation(force_info_);
         state_ = IDLE;
-        event_ = "";
-        force_info_received_ = false;
+//        event_ = "";
+//        force_info_received_ = false;
     }
 }
 

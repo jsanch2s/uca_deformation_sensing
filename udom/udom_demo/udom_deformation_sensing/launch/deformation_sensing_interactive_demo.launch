@@ -8,12 +8,13 @@
   <arg name="damping_mass" default="1.0"/>
   <arg name="damping_stiffness" default="0.01"/>
   <arg name="mesh_filename" default="bar_hard"/>
+  <arg name="contact_nodes" default="[4, 106, 5]"/>
   <arg name="collision_distance" default="1"/>
   <arg name="add_gravity" default="true"/>
   <arg name="gravity_vector" default="[0, 0, -9.805665]"/>
   <!-- Mass for the bar hard (in Kg). -->
   <arg name="mass" default="0.0144"/>
-  <arg name="reference_frame" default="map"/>
+  <arg name="reference_frame" default="test_rig"/>
   <arg name="object_frame" default="object"/>
   <arg name="constrained_nodes" default="[
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 133, 134, 135, 181, 182, 183, 217, 218, 219,
@@ -94,6 +95,7 @@
     <include
       file="$(find udom_geometric_transformation)/launch/nodal_force_calculator_example.launch">
       <arg name="loop_rate" default="$(arg loop_rate)"/>
+      <arg name="contact_nodes" default="$(arg contact_nodes)"/>
       <arg name="collision_distance" default="$(arg collision_distance)"/>
       <arg name="add_gravity" default="$(arg add_gravity)"/>
       <arg name="gravity_vector" default="$(arg gravity_vector)"/>
@@ -173,20 +175,15 @@
     <arg name="color" default="[1.0, 0.0, 0.0, 0.9]"/>
   </include>
 
-  <!-- To convert the mesh into a point cloud.-->
-  <include
-    file="$(find ucr_experiment_evaluation)/launch/mesh_to_pointcloud.launch">
-    <arg name="loop_rate" default="$(arg loop_rate)"/>
-    <arg name="reference_frame" default="$(arg object_frame)"/>
-  </include>
-
-  <!-- To convert the tetrahedral mesh into a triangular mesh.-->
   <include
     file="$(find ucr_experiment_evaluation)/launch/tet_mesh_to_mesh.launch">
     <arg name="loop_rate" default="$(arg loop_rate)"/>
   </include>
 
-  <!-- Add RViz -->
-  <node pkg="rviz" type="rviz" name="rviz"
-        args="-d $(find udom_deformation_sensing)/config/deformation_sensing_interactive_demo.rviz"/>
+  <!-- To convert mesh to point cloud.-->
+  <include
+    file="$(find ucr_experiment_evaluation)/launch/mesh_to_pointcloud.launch">
+    <arg name="loop_rate" default="$(arg loop_rate)"/>
+    <arg name="reference_frame" default="$(arg object_frame)"/>
+  </include>
 </launch>

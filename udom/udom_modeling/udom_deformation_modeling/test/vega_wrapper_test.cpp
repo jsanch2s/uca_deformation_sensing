@@ -73,36 +73,22 @@ TEST_F(VegaWrapperTest, test_init_elements)
 {
     my_interface->init_mesh(ros_mesh);
 
-    std::vector<int> element_1{3, 2, 4, 0};
-    std::vector<int> element_2{3, 1, 4, 0};
-    std::vector<int> element_3{3, 6, 2, 4};
-    std::vector<int> element_4{3, 6, 7, 4};
-    std::vector<int> element_5{3, 5, 1, 4};
-    std::vector<int> element_6{3, 5, 7, 4};
+    std::vector<int> element_1{0, 2, 1, 4};
+    std::vector<int> element_2{6, 5, 1, 3};
+    std::vector<int> element_3{6, 7, 5, 3};
+    std::vector<int> element_4{3, 5, 1, 2};
 
-    for (int ii = 0; ii < element_1.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_1.size(); ++ii) {
       EXPECT_EQ(element_1[ii], ros_mesh.tetrahedra[0].vertex_indices[ii]);
     }
-    for (int ii = 0; ii < element_2.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_2.size(); ++ii) {
       EXPECT_EQ(element_2[ii], ros_mesh.tetrahedra[1].vertex_indices[ii]);
     }
-    for (int ii = 0; ii < element_3.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_3.size(); ++ii) {
       EXPECT_EQ(element_3[ii], ros_mesh.tetrahedra[2].vertex_indices[ii]);
     }
-    for (int ii = 0; ii < element_4.size(); ++ii)
-    {
+    for (int ii = 0; ii < element_4.size(); ++ii) {
       EXPECT_EQ(element_4[ii], ros_mesh.tetrahedra[3].vertex_indices[ii]);
-    }
-    for (int ii = 0; ii < element_5.size(); ++ii)
-    {
-      EXPECT_EQ(element_5[ii], ros_mesh.tetrahedra[4].vertex_indices[ii]);
-    }
-    for (int ii = 0; ii < element_6.size(); ++ii)
-    {
-      EXPECT_EQ(element_6[ii], ros_mesh.tetrahedra[5].vertex_indices[ii]);
     }
 }
 
@@ -158,8 +144,7 @@ TEST_F(VegaWrapperTest, test_get_displacements)
 
 TEST_F(VegaWrapperTest, test_displacements_update)
 {
-    std::vector<double> displacements =
-    {
+    std::vector<double> displacements = {
         0.1, 0.2, 0.3, 0.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3
     };
 
@@ -201,8 +186,7 @@ TEST_F(VegaWrapperTest, test_displacements_update)
 
 TEST_F(VegaWrapperTest, test_reset_mesh)
 {
-    std::vector<double> displacements =
-    {
+    std::vector<double> displacements = {
         0.1, 0.2, 0.3, 0.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3
     };
 

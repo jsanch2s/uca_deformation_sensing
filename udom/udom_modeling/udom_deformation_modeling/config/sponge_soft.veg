@@ -6,7 +6,7 @@ TETS
 
 # Mass density (kg/m^3), Young modulus (N/m^2), Poisson ratio (for foams 0.25 - 0.35)
 *MATERIAL BODY
-ENU, 26, 1850, 0.30
+ENU, 26, 3000, 0.15
 
 *REGION
 allElements, BODY

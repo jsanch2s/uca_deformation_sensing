@@ -22,7 +22,7 @@
 
       <!-- Constrained vertices of the mesh. Each constrained node must specify
            its three degrees of freedom. E.g., to constrain vertices 4, 10 and 14 the
-           constrained_nodes should be [12, 13, 14, 30, 31, 32, 42, 43, 44]. -->
+           constrained_nodes should be [10, 11, 12, 28, 29, 30, 40, 41, 42]. -->
       <rosparam param="constrained_nodes" subst_value="True"> $(arg constrained_nodes) </rosparam>
 
       <!-- Time step of the simulation (in seconds). -->
